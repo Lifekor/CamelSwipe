@@ -1,7 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Установка размера холста в зависимости от размера экрана
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -17,46 +16,50 @@ resizeCanvas();
 
 const camelImg = new Image();
 camelImg.src = 'textures/camel.png';
+camelImg.onload = () => console.log('Camel image loaded');
+camelImg.onerror = () => console.error('Error loading camel image');
 
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
+trackImg.onload = () => console.log('Track image loaded');
+trackImg.onerror = () => console.error('Error loading track image');
 
 const coinImg = new Image();
 coinImg.src = 'textures/coin.png';
+coinImg.onload = () => console.log('Coin image loaded');
+coinImg.onerror = () => console.error('Error loading coin image');
 
 const camelFrames = [];
 for (let i = 1; i <= 36; i++) {
     const img = new Image();
     img.src = `textures/camel_run_${i}.png`;
+    img.onload = () => console.log(`Camel frame ${i} loaded`);
+    img.onerror = () => console.error(`Error loading camel frame ${i}`);
     camelFrames.push(img);
 }
 
 let frameIndex = 0;
-const camelWidth = 400; // Ширина верблюда (задается по требованию)
-const camelHeight = 400 * (157 / 278); // Высота верблюда, пропорциональная ширине
-const coinSize = 75; // Размер монетки (пропорциональный)
+const camelWidth = 400; 
+const camelHeight = 400 * (157 / 278);
+const coinSize = 75; 
 
-// Настройки текстуры дороги
-const trackTextureWidth = 533; // Ширина текстуры дороги
-const trackTextureHeight = 232; // Длина текстуры дороги
+const trackTextureWidth = 533;
+const trackTextureHeight = 232;
 
-// Масштабирование текстуры дороги для удаления эффекта "слишком близко"
-const trackScale = 0.32; // Уменьшение текстуры дороги до 50%
+const trackScale = 0.32;
 
-// Полосы для спавна монеток и перемещения верблюда
 const lanes = [
     canvas.width / 4,
     canvas.width / 2,
     3 * canvas.width / 4
 ];
-let currentLane = 1; // Центр
+let currentLane = 1; 
 let camelY = canvas.height * 0.75;
 let trackY = 0;
 let coinSpawnTimer = 0;
 const speed = 5;
 const coins = [];
 
-// Вычисляем количество текстур, необходимых для покрытия экрана
 function getNumTrackTiles() {
     return {
         numTrackTilesX: Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1,
@@ -65,7 +68,7 @@ function getNumTrackTiles() {
 }
 
 function drawTrack() {
-    const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; // Центрируем текстуру дороги
+    const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; 
     const { numTrackTilesX, numTrackTilesY } = getNumTrackTiles();
 
     for (let i = 0; i < numTrackTilesX; i++) {
@@ -96,7 +99,7 @@ function spawnCoin() {
         const lane = Math.floor(Math.random() * 3);
         const x = lanes[lane] - coinSize / 2;
         coins.push({ x: x, y: -coinSize, lane: lane });
-        coinSpawnTimer = 100; // Спавн монетки каждые 100 кадров
+        coinSpawnTimer = 100;
     }
     coinSpawnTimer--;
 }
@@ -113,17 +116,16 @@ function drawCoins() {
             i--;
         }
 
-        // Проверка на столкновение с верблюдом
         if (coin.y + coinSize > camelY && coin.y < camelY + camelHeight &&
             coin.lane === currentLane) {
             coins.splice(i, 1);
             i--;
-            // Добавить логику для начисления очков и т.д.
         }
     }
 }
 
 function gameLoop() {
+    console.log('Game loop running');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawTrack();
@@ -134,7 +136,6 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// Обработчик для нажатий клавиш
 function handleKeyPress(event) {
     if (event.key === 'ArrowLeft' && currentLane > 0) {
         currentLane--;
@@ -143,7 +144,6 @@ function handleKeyPress(event) {
     }
 }
 
-// Обработчики для свайпов
 let touchStartX = null;
 
 function handleTouchStart(event) {
@@ -171,5 +171,6 @@ window.addEventListener('touchstart', handleTouchStart);
 window.addEventListener('touchmove', handleTouchMove);
 
 camelImg.onload = () => {
+    console.log('All images loaded, starting game loop');
     gameLoop();
 };
