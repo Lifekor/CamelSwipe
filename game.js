@@ -57,16 +57,11 @@ const speed = 5;
 const coins = [];
 
 // Вычисляем количество текстур, необходимых для покрытия экрана
-function getNumTrackTiles() {
-    return {
-        numTrackTilesX: Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1,
-        numTrackTilesY: Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1
-    };
-}
+const numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
+const numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1;
 
 function drawTrack() {
     const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; // Центрируем текстуру дороги
-    const { numTrackTilesX, numTrackTilesY } = getNumTrackTiles();
 
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
@@ -134,7 +129,6 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// Обработчик для нажатий клавиш
 function handleKeyPress(event) {
     if (event.key === 'ArrowLeft' && currentLane > 0) {
         currentLane--;
@@ -143,7 +137,6 @@ function handleKeyPress(event) {
     }
 }
 
-// Обработчики для свайпов
 let touchStartX = null;
 
 function handleTouchStart(event) {
