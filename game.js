@@ -1,8 +1,19 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = 414; // Размер канваса
-canvas.height = 896;
+// Установка размера холста в зависимости от размера экрана
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    camelY = canvas.height * 0.75;
+
+    // Пересчитать полосы для спавна монеток и перемещения верблюда
+    lanes[0] = canvas.width / 4;
+    lanes[1] = canvas.width / 2;
+    lanes[2] = 3 * canvas.width / 4;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 const camelImg = new Image();
 camelImg.src = 'textures/camel.png';
@@ -26,8 +37,8 @@ const camelHeight = 400 * (157 / 278); // Высота верблюда, про�
 const coinSize = 75; // Размер монетки (пропорциональный)
 
 // Настройки текстуры дороги
-const trackTextureWidth = 2132; // Ширина текстуры дороги
-const trackTextureHeight = 930; // Длина текстуры дороги
+const trackTextureWidth = 533; // Ширина текстуры дороги
+const trackTextureHeight = 232; // Длина текстуры дороги
 
 // Масштабирование текстуры дороги для удаления эффекта "слишком близко"
 const trackScale = 0.32; // Уменьшение текстуры дороги до 50%
@@ -46,11 +57,16 @@ const speed = 5;
 const coins = [];
 
 // Вычисляем количество текстур, необходимых для покрытия экрана
-const numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
-const numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1;
+function getNumTrackTiles() {
+    return {
+        numTrackTilesX: Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1,
+        numTrackTilesY: Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1
+    };
+}
 
 function drawTrack() {
     const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; // Центрируем текстуру дороги
+    const { numTrackTilesX, numTrackTilesY } = getNumTrackTiles();
 
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
@@ -118,6 +134,7 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+// Обработчик для нажатий клавиш
 function handleKeyPress(event) {
     if (event.key === 'ArrowLeft' && currentLane > 0) {
         currentLane--;
@@ -126,7 +143,32 @@ function handleKeyPress(event) {
     }
 }
 
+// Обработчики для свайпов
+let touchStartX = null;
+
+function handleTouchStart(event) {
+    touchStartX = event.touches[0].clientX;
+}
+
+function handleTouchMove(event) {
+    if (!touchStartX) return;
+
+    let touchEndX = event.touches[0].clientX;
+    let diffX = touchStartX - touchEndX;
+
+    if (Math.abs(diffX) > 30) {
+        if (diffX > 0 && currentLane > 0) {
+            currentLane--;
+        } else if (diffX < 0 && currentLane < 2) {
+            currentLane++;
+        }
+        touchStartX = null;
+    }
+}
+
 window.addEventListener('keydown', handleKeyPress);
+window.addEventListener('touchstart', handleTouchStart);
+window.addEventListener('touchmove', handleTouchMove);
 
 camelImg.onload = () => {
     gameLoop();
