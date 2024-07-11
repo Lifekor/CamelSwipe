@@ -16,7 +16,10 @@ resizeCanvas();
 
 const camelImg = new Image();
 camelImg.src = 'textures/camel.png';
-camelImg.onload = () => console.log('Camel image loaded');
+camelImg.onload = () => {
+    console.log('Camel image loaded');
+    startGame();
+};
 camelImg.onerror = () => console.error('Error loading camel image');
 
 const trackImg = new Image();
@@ -39,9 +42,9 @@ for (let i = 1; i <= 36; i++) {
 }
 
 let frameIndex = 0;
-const camelWidth = 400; 
+const camelWidth = 400;
 const camelHeight = 400 * (157 / 278);
-const coinSize = 75; 
+const coinSize = 75;
 
 const trackTextureWidth = 533;
 const trackTextureHeight = 232;
@@ -53,7 +56,7 @@ const lanes = [
     canvas.width / 2,
     3 * canvas.width / 4
 ];
-let currentLane = 1; 
+let currentLane = 1;
 let camelY = canvas.height * 0.75;
 let trackY = 0;
 let coinSpawnTimer = 0;
@@ -68,7 +71,7 @@ function getNumTrackTiles() {
 }
 
 function drawTrack() {
-    const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; 
+    const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2;
     const { numTrackTilesX, numTrackTilesY } = getNumTrackTiles();
 
     for (let i = 0; i < numTrackTilesX; i++) {
@@ -170,7 +173,6 @@ window.addEventListener('keydown', handleKeyPress);
 window.addEventListener('touchstart', handleTouchStart);
 window.addEventListener('touchmove', handleTouchMove);
 
-camelImg.onload = () => {
-    console.log('All images loaded, starting game loop');
+function startGame() {
     gameLoop();
-};
+}
