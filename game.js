@@ -1,59 +1,36 @@
-const { createCanvas, loadImage } = require('canvas');
-
-// Создаем холст и его контекст
-const canvas = createCanvas(414, 896);
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Пути к изображениям
-const camelPaths = [];
-for (let i = 1; i <= 8; i++) {
-    camelPaths.push(`textures/camel_run_${i}.png`);
+canvas.width = 414; // Размер канваса
+canvas.height = 896;
+
+const camelImg = new Image();
+camelImg.src = 'textures/camel.png';
+
+const trackImg = new Image();
+trackImg.src = 'textures/track.png';
+
+const coinImg = new Image();
+coinImg.src = 'textures/coin.png';
+
+const camelFrames = [];
+for (let i = 1; i <= 36; i++) {
+    const img = new Image();
+    img.src = `textures/camel_run_${i}.png`;
+    camelFrames.push(img);
 }
-const camelImgPath = 'textures/camel.png';
-const trackImgPath = 'textures/track.png';
-const coinImgPath = 'textures/coin.png';
-
-// Загружаем изображения
-const loadImages = paths => Promise.all(paths.map(path => loadImage(path)));
-
-let camelFrames = [];
-let camelImg, trackImg, coinImg;
-
-Promise.all([
-    loadImages(camelPaths).then(images => {
-        camelFrames = images;
-        console.log('Camel frames loaded');
-    }),
-    loadImage(camelImgPath).then(image => {
-        camelImg = image;
-        console.log('Camel image loaded');
-    }),
-    loadImage(trackImgPath).then(image => {
-        trackImg = image;
-        console.log('Track image loaded');
-    }),
-    loadImage(coinImgPath).then(image => {
-        coinImg = image;
-        console.log('Coin image loaded');
-    })
-]).then(() => {
-    console.log('All images loaded, starting game');
-    startGame();
-}).catch(error => {
-    console.error('Error loading images:', error);
-});
 
 let frameIndex = 0;
-const camelWidth = 300; // Ширина верблюда (задается по требованию)
-const camelHeight = 300 * (157 / 278); // Высота верблюда, пропорциональная ширине
-const coinSize = 50; // Размер монетки (пропорциональный)
+const camelWidth = 400; // Ширина верблюда (задается по требованию)
+const camelHeight = 400 * (157 / 278); // Высота верблюда, пропорциональная ширине
+const coinSize = 75; // Размер монетки (пропорциональный)
 
 // Настройки текстуры дороги
 const trackTextureWidth = 2132; // Ширина текстуры дороги
 const trackTextureHeight = 930; // Длина текстуры дороги
 
 // Масштабирование текстуры дороги для удаления эффекта "слишком близко"
-const trackScale = 0.5; // Уменьшение текстуры дороги до 50%
+const trackScale = 0.32; // Уменьшение текстуры дороги до 50%
 
 // Полосы для спавна монеток и перемещения верблюда
 const lanes = [
@@ -78,7 +55,7 @@ function drawTrack() {
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
             ctx.drawImage(trackImg, 
-                          offsetX + i * trackTextureWidth * trackScale - (trackTextureWidth * trackScale) / 2, 
+                          offsetX + i * trackTextureWidth * trackScale - (trackTextureWidth * trackScale) / 1, 
                           trackY + j * trackTextureHeight * trackScale - trackTextureHeight * trackScale, 
                           trackTextureWidth * trackScale, 
                           trackTextureHeight * trackScale);
@@ -130,24 +107,17 @@ function drawCoins() {
     }
 }
 
-function startGame() {
-    console.log('Game started');
-    function gameLoop() {
-        console.log('Game loop');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        drawTrack();
-        drawCamel();
-        spawnCoin();
-        drawCoins();
+    drawTrack();
+    drawCamel();
+    spawnCoin();
+    drawCoins();
 
-        setTimeout(gameLoop, 1000 / 60); // Запускать 60 кадров в секунду
-    }
-
-    gameLoop();
+    requestAnimationFrame(gameLoop);
 }
 
-// Обработчик для нажатий клавиш
 function handleKeyPress(event) {
     if (event.key === 'ArrowLeft' && currentLane > 0) {
         currentLane--;
@@ -156,8 +126,8 @@ function handleKeyPress(event) {
     }
 }
 
-// Устанавливаем обработчик клавиш
-process.stdin.setRawMode(true);
-process.stdin.resume();
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', handleKeyPress);
+window.addEventListener('keydown', handleKeyPress);
+
+camelImg.onload = () => {
+    gameLoop();
+};
