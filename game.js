@@ -4,23 +4,43 @@ const { createCanvas, loadImage } = require('canvas');
 const canvas = createCanvas(414, 896);
 const ctx = canvas.getContext('2d');
 
-// Загружаем изображения
-const camelFrames = [];
+// Пути к изображениям
+const camelPaths = [];
 for (let i = 1; i <= 8; i++) {
-    loadImage(`textures/camel_run_${i}.png`).then(image => {
-        camelFrames.push(image);
-    });
+    camelPaths.push(`textures/camel_run_${i}.png`);
 }
+const camelImgPath = 'textures/camel.png';
+const trackImgPath = 'textures/track.png';
+const coinImgPath = 'textures/coin.png';
+
+// Загружаем изображения
+const loadImages = paths => Promise.all(paths.map(path => loadImage(path)));
+
+let camelFrames = [];
 let camelImg, trackImg, coinImg;
 
-loadImage('textures/camel.png').then(image => {
-    camelImg = image;
-});
-loadImage('textures/track.png').then(image => {
-    trackImg = image;
-});
-loadImage('textures/coin.png').then(image => {
-    coinImg = image;
+Promise.all([
+    loadImages(camelPaths).then(images => {
+        camelFrames = images;
+        console.log('Camel frames loaded');
+    }),
+    loadImage(camelImgPath).then(image => {
+        camelImg = image;
+        console.log('Camel image loaded');
+    }),
+    loadImage(trackImgPath).then(image => {
+        trackImg = image;
+        console.log('Track image loaded');
+    }),
+    loadImage(coinImgPath).then(image => {
+        coinImg = image;
+        console.log('Coin image loaded');
+    })
+]).then(() => {
+    console.log('All images loaded, starting game');
+    startGame();
+}).catch(error => {
+    console.error('Error loading images:', error);
 });
 
 let frameIndex = 0;
@@ -110,15 +130,21 @@ function drawCoins() {
     }
 }
 
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function startGame() {
+    console.log('Game started');
+    function gameLoop() {
+        console.log('Game loop');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawTrack();
-    drawCamel();
-    spawnCoin();
-    drawCoins();
+        drawTrack();
+        drawCamel();
+        spawnCoin();
+        drawCoins();
 
-    setTimeout(gameLoop, 1000 / 60); // Запускать 60 кадров в секунду
+        setTimeout(gameLoop, 1000 / 60); // Запускать 60 кадров в секунду
+    }
+
+    gameLoop();
 }
 
 // Обработчик для нажатий клавиш
@@ -135,5 +161,3 @@ process.stdin.setRawMode(true);
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', handleKeyPress);
-
-gameLoop();
