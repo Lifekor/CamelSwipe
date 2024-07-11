@@ -16,28 +16,17 @@ resizeCanvas();
 
 const camelImg = new Image();
 camelImg.src = 'textures/camel.png';
-camelImg.onload = () => {
-    console.log('Camel image loaded');
-    startGame();
-};
-camelImg.onerror = () => console.error('Error loading camel image');
 
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
-trackImg.onload = () => console.log('Track image loaded');
-trackImg.onerror = () => console.error('Error loading track image');
 
 const coinImg = new Image();
 coinImg.src = 'textures/coin.png';
-coinImg.onload = () => console.log('Coin image loaded');
-coinImg.onerror = () => console.error('Error loading coin image');
 
 const camelFrames = [];
 for (let i = 1; i <= 36; i++) {
     const img = new Image();
     img.src = `textures/camel_run_${i}.png`;
-    img.onload = () => console.log(`Camel frame ${i} loaded`);
-    img.onerror = () => console.error(`Error loading camel frame ${i}`);
     camelFrames.push(img);
 }
 
@@ -128,7 +117,6 @@ function drawCoins() {
 }
 
 function gameLoop() {
-    console.log('Game loop running');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawTrack();
@@ -173,6 +161,6 @@ window.addEventListener('keydown', handleKeyPress);
 window.addEventListener('touchstart', handleTouchStart);
 window.addEventListener('touchmove', handleTouchMove);
 
-function startGame() {
+camelImg.onload = () => {
     gameLoop();
-}
+};
