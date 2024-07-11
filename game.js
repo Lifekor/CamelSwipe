@@ -1,36 +1,39 @@
-const canvas = document.getElementById('gameCanvas');
+const { createCanvas, loadImage } = require('canvas');
+
+// Создаем холст и его контекст
+const canvas = createCanvas(414, 896);
 const ctx = canvas.getContext('2d');
 
-canvas.width = 414; // Размер канваса
-canvas.height = 896;
-
-const camelImg = new Image();
-camelImg.src = 'textures/camel.png';
-
-const trackImg = new Image();
-trackImg.src = 'textures/track.png';
-
-const coinImg = new Image();
-coinImg.src = 'textures/coin.png';
-
+// Загружаем изображения
 const camelFrames = [];
-for (let i = 1; i <= 36; i++) {
-    const img = new Image();
-    img.src = `textures/camel_run_${i}.png`;
-    camelFrames.push(img);
+for (let i = 1; i <= 8; i++) {
+    loadImage(`textures/camel_run_${i}.png`).then(image => {
+        camelFrames.push(image);
+    });
 }
+let camelImg, trackImg, coinImg;
+
+loadImage('textures/camel.png').then(image => {
+    camelImg = image;
+});
+loadImage('textures/track.png').then(image => {
+    trackImg = image;
+});
+loadImage('textures/coin.png').then(image => {
+    coinImg = image;
+});
 
 let frameIndex = 0;
-const camelWidth = 400; // Ширина верблюда (задается по требованию)
-const camelHeight = 400 * (157 / 278); // Высота верблюда, пропорциональная ширине
-const coinSize = 75; // Размер монетки (пропорциональный)
+const camelWidth = 300; // Ширина верблюда (задается по требованию)
+const camelHeight = 300 * (157 / 278); // Высота верблюда, пропорциональная ширине
+const coinSize = 50; // Размер монетки (пропорциональный)
 
 // Настройки текстуры дороги
 const trackTextureWidth = 2132; // Ширина текстуры дороги
 const trackTextureHeight = 930; // Длина текстуры дороги
 
 // Масштабирование текстуры дороги для удаления эффекта "слишком близко"
-const trackScale = 0.32; // Уменьшение текстуры дороги до 50%
+const trackScale = 0.5; // Уменьшение текстуры дороги до 50%
 
 // Полосы для спавна монеток и перемещения верблюда
 const lanes = [
@@ -55,7 +58,7 @@ function drawTrack() {
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
             ctx.drawImage(trackImg, 
-                          offsetX + i * trackTextureWidth * trackScale - (trackTextureWidth * trackScale) / 1, 
+                          offsetX + i * trackTextureWidth * trackScale - (trackTextureWidth * trackScale) / 2, 
                           trackY + j * trackTextureHeight * trackScale - trackTextureHeight * trackScale, 
                           trackTextureWidth * trackScale, 
                           trackTextureHeight * trackScale);
@@ -115,9 +118,10 @@ function gameLoop() {
     spawnCoin();
     drawCoins();
 
-    requestAnimationFrame(gameLoop);
+    setTimeout(gameLoop, 1000 / 60); // Запускать 60 кадров в секунду
 }
 
+// Обработчик для нажатий клавиш
 function handleKeyPress(event) {
     if (event.key === 'ArrowLeft' && currentLane > 0) {
         currentLane--;
@@ -126,8 +130,10 @@ function handleKeyPress(event) {
     }
 }
 
-window.addEventListener('keydown', handleKeyPress);
+// Устанавливаем обработчик клавиш
+process.stdin.setRawMode(true);
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', handleKeyPress);
 
-camelImg.onload = () => {
-    gameLoop();
-};
+gameLoop();
