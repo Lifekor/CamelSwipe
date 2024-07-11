@@ -9,8 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2",
-    "node-telegram-bot-api": "^0.50.0",
-    "path": "^0.12.7"
+    "express": "^4.17.1",
+    "node-telegram-bot-api": "^0.50.0"
   }
 }
