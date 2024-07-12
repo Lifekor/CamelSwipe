@@ -26,8 +26,8 @@ const camelHeight = 400 * (157 / 278); // Высота верблюда, про�
 const coinSize = 75; // Размер монетки (пропорциональный)
 
 // Настройки текстуры дороги
-const trackTextureWidth = 533; // Ширина текстуры дороги
-const trackTextureHeight = 232; // Длина текстуры дороги
+const trackTextureWidth = 2132; // Ширина текстуры дороги
+const trackTextureHeight = 930; // Длина текстуры дороги
 
 // Масштабирование текстуры дороги для удаления эффекта "слишком близко"
 const trackScale = 0.32; // Уменьшение текстуры дороги до 50%
@@ -126,7 +126,32 @@ function handleKeyPress(event) {
     }
 }
 
+// Добавление управления свайпом пальца
+let touchStartX = null;
+
+function handleTouchStart(event) {
+    touchStartX = event.touches[0].clientX;
+}
+
+function handleTouchMove(event) {
+    if (!touchStartX) return;
+
+    let touchEndX = event.touches[0].clientX;
+    let diffX = touchStartX - touchEndX;
+
+    if (Math.abs(diffX) > 30) {
+        if (diffX > 0 && currentLane > 0) {
+            currentLane--;
+        } else if (diffX < 0 && currentLane < 2) {
+            currentLane++;
+        }
+        touchStartX = null;
+    }
+}
+
 window.addEventListener('keydown', handleKeyPress);
+window.addEventListener('touchstart', handleTouchStart);
+window.addEventListener('touchmove', handleTouchMove);
 
 camelImg.onload = () => {
     gameLoop();
