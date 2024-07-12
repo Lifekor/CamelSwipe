@@ -4,36 +4,16 @@ const ctx = canvas.getContext('2d');
 let camelY;
 let tapText = [];
 let tapTimer = 0;
-
-// Функция для изменения размера канваса в зависимости от размера окна
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    camelY = canvas.height * 0.75;
-
-    // Пересчитываем полосы для спавна монеток и перемещения верблюда
-    lanes[0] = canvas.width / 4;
-    lanes[1] = canvas.width / 2;
-    lanes[2] = 3 * canvas.width / 4;
-
-    // Пересчитываем количество текстур для покрытия экрана
-    numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
-    numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 2;
-
-    console.log(`Canvas resized: width=${canvas.width}, height=${canvas.height}`);
-}
-
-window.addEventListener('resize', resizeCanvas);
+let coinCount = 0;
+let taps = 1000;
+let progress = 0;
+let speed = 5;
 
 const camelImg = new Image();
 camelImg.src = 'textures/camel.png';
-camelImg.onload = () => console.log('Camel image loaded');
-camelImg.onerror = () => console.error('Error loading camel image');
 
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
-trackImg.onload = () => console.log('Track image loaded');
-trackImg.onerror = () => console.error('Error loading track image');
 
 const tapText1Img = new Image();
 tapText1Img.src = 'textures/Numbers/1.png';
@@ -41,65 +21,62 @@ tapText1Img.src = 'textures/Numbers/1.png';
 const tapText2Img = new Image();
 tapText2Img.src = 'textures/Numbers/2.png';
 
-// Загрузка анимационных кадров монеток
 const coinFrames = [];
 const loadCoinFrame = (i) => {
     const img = new Image();
     img.src = `textures/Coins/${String(i).padStart(4, '0')}.png`;
-    img.onload = () => console.log(`Coin frame ${i} loaded`);
-    img.onerror = () => console.error(`Error loading coin frame ${i}`);
     coinFrames.push(img);
 };
-
 for (let i = 1; i <= 50; i++) {
     loadCoinFrame(i);
 }
 
-// Загрузка кадров анимации верблюда
 const camelFrames = [];
 const loadCamelFrame = (i) => {
     const img = new Image();
     img.src = `textures/camel_run_${i}.png`;
-    img.onload = () => console.log(`Camel frame ${i} loaded`);
-    img.onerror = () => console.error(`Error loading camel frame ${i}`);
     camelFrames.push(img);
 };
-
 for (let i = 1; i <= 36; i++) {
     loadCamelFrame(i);
 }
 
 let frameIndex = 0;
-const camelWidth = 400; // Ширина верблюда (задается по требованию)
-const camelHeight = 400 * (157 / 278); // Высота верблюда, пропорциональная ширине
-const coinSize = 75; // Размер монетки (пропорциональный)
+const camelWidth = 400;
+const camelHeight = 400 * (157 / 278);
+const coinSize = 75;
 
-// Настройки текстуры дороги
-const trackTextureWidth = 2132; // Ширина текстуры дороги
-const trackTextureHeight = 930; // Длина текстуры дороги
+const trackTextureWidth = 533;
+const trackTextureHeight = 232;
+const trackScale = 1;
 
-// Масштабирование текстуры дороги для удаления эффекта "слишком близко"
-const trackScale = 0.32; // Уменьшение текстуры дороги до 32%
-
-// Полосы для спавна монеток и перемещения верблюда
 let lanes = [
     canvas.width / 4,
     canvas.width / 2,
     3 * canvas.width / 4
 ];
-let currentLane = 1; // Центр
+let currentLane = 1;
 trackY = 0;
 let coinSpawnTimer = 0;
-const speed = 5;
 const coins = [];
 
-// Пересчитываем количество текстур для покрытия экрана
 let numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
 let numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1;
 
-function drawTrack() {
-    const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; // Центрируем текстуру дороги
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    camelY = canvas.height * 0.55;
+    lanes[0] = canvas.width / 4;
+    lanes[1] = canvas.width / 2;
+    lanes[2] = 3 * canvas.width / 4;
+    numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
+    numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 2;
+}
+window.addEventListener('resize', resizeCanvas);
 
+function drawTrack() {
+    const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2;
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
             ctx.drawImage(trackImg,
@@ -109,7 +86,6 @@ function drawTrack() {
                           trackTextureHeight * trackScale);
         }
     }
-
     trackY += speed;
     if (trackY >= trackTextureHeight * trackScale) {
         trackY = 0;
@@ -117,48 +93,35 @@ function drawTrack() {
 }
 
 function drawCamel() {
-    ctx.drawImage(camelFrames[frameIndex], (canvas.width - camelWidth) / 2, camelY, camelWidth, camelHeight);
-
     frameIndex++;
     if (frameIndex >= camelFrames.length) frameIndex = 0;
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2, camelY, camelWidth, camelHeight);
 }
 
 function spawnCoin() {
     if (coinSpawnTimer <= 0) {
-        for (let i = 0; i < 3; i++) { // Спавним 3 монетки
-            const lane = Math.floor(Math.random() * 3);
-            const x = lanes[lane] - coinSize / 2;
-            coins.push({ x: x, y: -coinSize, lane: lane, frameIndex: 0 });
+        const numCoins = Math.floor(Math.random() * 3) + 1; // Спавним от 1 до 3 монеток
+        for (let i = 0; i < numCoins; i++) {
+            const x = Math.random() * canvas.width; // Случайная позиция по оси X
+            const y = -coinSize - Math.random() * canvas.height; // Спавн за пределами экрана сверху, на случайной высоте
+            coins.push({ x: x, y: y, frameIndex: 0 });
         }
-        coinSpawnTimer = 50; // Спавн монеток каждые 50 кадров
+        coinSpawnTimer = 50; // Спавн монеток каждые 100 кадров
     }
     coinSpawnTimer--;
 }
+
 
 function drawCoins() {
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
         coin.y += speed;
-
-        // Анимация монетки
         ctx.drawImage(coinFrames[coin.frameIndex], coin.x, coin.y, coinSize, coinSize);
-
-        // Обновление кадра анимации монетки
         coin.frameIndex++;
-        if (coin.frameIndex >= coinFrames.length) {
-            coin.frameIndex = 0;
-        }
-
+        if (coin.frameIndex >= coinFrames.length) coin.frameIndex = 0;
         if (coin.y > canvas.height) {
             coins.splice(i, 1);
             i--;
-        }
-
-        // Проверка на столкновение с верблюдом
-        if (coin.y + coinSize > camelY && coin.y < camelY + camelHeight) {
-            coins.splice(i, 1);
-            i--;
-            // Добавить логику для начисления очков и т.д.
         }
     }
 }
@@ -167,10 +130,9 @@ function drawTapText() {
     for (let i = 0; i < tapText.length; i++) {
         const tap = tapText[i];
         ctx.globalAlpha = tap.opacity;
-        ctx.drawImage(tap.img, tap.x, tap.y, tap.size, tap.size);
+        ctx.drawImage(tap.img, tap.x, tap.y, 25, 25);
         ctx.globalAlpha = 1;
-
-        tap.y -= 2; // Подъем текста
+        tap.y -= 2;
         tap.opacity -= 0.02;
         if (tap.opacity <= 0) {
             tapText.splice(i, 1);
@@ -179,43 +141,82 @@ function drawTapText() {
     }
 }
 
+function updateProgress() {
+    const progressBar = document.querySelector('.progress-bar');
+    const playerIcon = document.getElementById('player-icon');
+    const progressText = document.getElementById('progress-text');
+    const progressBarHeight = progressBar.clientHeight;
+
+    progressText.style.color = 'white'; // Убедимся, что цвет текста белый
+    progressText.style.fontFamily = 'LilitaOne-Regular'; // Используем нужный шрифт
+
+    playerIcon.style.bottom = `${(progress / 100) * progressBarHeight}px`;
+    progressText.style.bottom = `${(progress / 100) * progressBarHeight}px`;
+    progressText.innerText = `${Math.floor(progress)}%`;
+    if (progress >= 100) {
+        progress = 100;
+    }
+}
+
+function updateTapBar() {
+    const tapFill = document.getElementById('tap-fill');
+    const remainingTaps = document.getElementById('remaining-taps');
+    if (tapTimer <= 0) {
+        taps = Math.min(taps + 1, 1000);
+        tapTimer = 600;
+    }
+    tapTimer--;
+    remainingTaps.innerText = taps;
+    tapFill.style.width = `${(taps / 1000) * 100}%`;
+}
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     drawTrack();
     drawCamel();
     spawnCoin();
     drawCoins();
     drawTapText();
-
+    updateProgress();
+    updateTapBar();
     requestAnimationFrame(gameLoop);
-}
-
-function handleKeyPress(event) {
-    // Убираем управление стрелками
 }
 
 function handleTap(event) {
     const tapX = event.clientX;
     const tapY = event.clientY;
-    let img = tapText1Img; // По умолчанию х1
-
+    let img = tapText1Img;
+    let tapOnCoin = false;
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
         if (tapX > coin.x && tapX < coin.x + coinSize && tapY > coin.y && tapY < coin.y + coinSize) {
-            img = tapText2Img; // Если попали по монетке
+            img = tapText2Img;
             coins.splice(i, 1);
+            coinCount++;
+            document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
+            tapOnCoin = true;
             break;
         }
     }
-
-    tapText.push({ img: img, x: tapX - 25, y: tapY - 25, size: 50, opacity: 1 });
+    if (!tapOnCoin) {
+        coinCount++;
+        document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
+    }
+    tapText.push({ img: img, x: tapX - 12.5, y: tapY - 12.5, size: 25, opacity: 1 });
+    if (taps > 0) {
+        taps--;
+        document.getElementById('remaining-taps').innerText = taps;
+        const tapBar = document.getElementById('tap-bar');
+        tapBar.style.width = `${(taps / 1000) * 100}%`;
+    }
+    progress += 1; // Увеличиваем прогресс на 1% за каждый тап
+    if (progress > 100) progress = 100; // Не позволяем прогрессу превышать 100%
+    updateProgress(); // Обновляем прогресс-бар и иконку игрока
 }
 
-window.addEventListener('keydown', handleKeyPress);
 window.addEventListener('click', handleTap);
 
 camelImg.onload = () => {
-    resizeCanvas(); // Изменение размера канваса при загрузке изображения
+    resizeCanvas();
     gameLoop();
 };

@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camel Runner</title>
     <style>
+        @font-face {
+            font-family: 'LilitaOne-Regular';
+            src: url('Font/LilitaOne-Regular.ttf') format('truetype');
+        }
         body {
             margin: 0;
             overflow: hidden;
@@ -13,14 +17,119 @@
             align-items: center;
             height: 100vh;
             background: #000;
+            font-family: 'LilitaOne-Regular';
         }
         #gameCanvas {
             display: block;
             background: #000;
         }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            font-size: 31px;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+        }
+        .progress-container {
+            position: absolute;
+            left: 3%;
+            top: 36%;
+            transform: translateY(-26%);
+        }
+        .progress-bar {
+            position: relative;
+            width: 25px;
+            height: 580px;
+            background-image: url('textures/progress-bar.png');
+            background-size: cover;
+        }
+        .player-icon {
+            position: absolute;
+            top: 3%;
+            left: -35%;
+            width: 39px;
+            height: 35px;
+            scale: 70%;
+            background-image: url('textures/player-icon.png');
+            background-size: cover;
+        }
+        .tap-bar-container {
+            position: absolute;
+            bottom: 29px;
+            left: 25%;
+            width: 50%;
+            height: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tap-bar {
+            width: 215px;
+            height: 21px;
+            background-image: url('textures/tap-bar.png');
+            background-size: cover;
+            position: relative;
+        }
+        .tap-fill {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            bottom: 0px;
+            scale: 100%;
+            background-image: url('textures/tap-fill.png');
+            background-size: cover;
+        }
+        .tap-count {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: white;
+            left: -40px;
+        }
+        .tap-total {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: white;
+            right: -40px;
+        }
+        .coin-icon {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background-image: url('textures/coin.png');
+            background-size: cover;
+        }
+        #progress-text {
+            font-family: 'LilitaOne-Regular';
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <div id="ui">
+        <div id="coin-count">
+            <div class="coin-icon"></div>
+            <div id="coin-count-text">0</div>
+        </div>
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
+            <div id="progress-text" style="position: absolute; bottom: 0; transform: translateY(100%);"></div>
+        </div>
+    </div>
+    <div class="tap-bar-container">
+        <div class="tap-count" id="remaining-taps">1000</div>
+        <div class="tap-bar">
+            <div class="tap-fill" id="tap-fill"></div>
+        </div>
+        <div class="tap-total">1000</div>
+    </div>
     <canvas id="gameCanvas"></canvas>
     <script src="script.js"></script>
 </body>
