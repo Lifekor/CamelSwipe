@@ -10,9 +10,15 @@ camelImg.src = 'textures/camel.png';
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
 
-const coinImg = new Image();
-coinImg.src = 'textures/coin.png';
+// Загрузка анимационных кадров монеток
+const coinFrames = [];
+for (let i = 1; i <= 50; i++) {
+    const img = new Image();
+    img.src = `textures/Coins/${String(i).padStart(4, '0')}.png`;
+    coinFrames.push(img);
+}
 
+// Загрузка кадров анимации верблюда
 const camelFrames = [];
 for (let i = 1; i <= 36; i++) {
     const img = new Image();
@@ -79,7 +85,7 @@ function spawnCoin() {
     if (coinSpawnTimer <= 0) {
         const lane = Math.floor(Math.random() * 3);
         const x = lanes[lane] - coinSize / 2;
-        coins.push({ x: x, y: -coinSize, lane: lane });
+        coins.push({ x: x, y: -coinSize, lane: lane, frameIndex: 0 });
         coinSpawnTimer = 100; // Спавн монетки каждые 100 кадров
     }
     coinSpawnTimer--;
@@ -90,7 +96,14 @@ function drawCoins() {
         const coin = coins[i];
         coin.y += speed;
 
-        ctx.drawImage(coinImg, coin.x, coin.y, coinSize, coinSize);
+        // Анимация монетки
+        ctx.drawImage(coinFrames[coin.frameIndex], coin.x, coin.y, coinSize, coinSize);
+
+        // Обновление кадра анимации монетки
+        coin.frameIndex++;
+        if (coin.frameIndex >= coinFrames.length) {
+            coin.frameIndex = 0;
+        }
 
         if (coin.y > canvas.height) {
             coins.splice(i, 1);
