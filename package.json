@@ -1,15 +1,14 @@
 {
   "name": "camelrunner",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple Camel Runner game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "node-telegram-bot-api": "^0.50.0"
-  }
+    "express": "^4.17.1"
+  },
+  "author": "",
+  "license": "ISC"
 }
