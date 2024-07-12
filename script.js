@@ -2,6 +2,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 let camelY;
+let tapText = [];
+let tapTimer = 0;
 
 // Функция для изменения размера канваса в зависимости от размера окна
 function resizeCanvas() {
@@ -16,7 +18,7 @@ function resizeCanvas() {
 
     // Пересчитываем количество текстур для покрытия экрана
     numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
-    numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1;
+    numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 2;
 
     console.log(`Canvas resized: width=${canvas.width}, height=${canvas.height}`);
 }
@@ -32,6 +34,12 @@ const trackImg = new Image();
 trackImg.src = 'textures/track.png';
 trackImg.onload = () => console.log('Track image loaded');
 trackImg.onerror = () => console.error('Error loading track image');
+
+const tapText1Img = new Image();
+tapText1Img.src = 'textures/Numbers/1.png';
+
+const tapText2Img = new Image();
+tapText2Img.src = 'textures/Numbers/2.png';
 
 // Загрузка анимационных кадров монеток
 const coinFrames = [];
@@ -90,13 +98,12 @@ let numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) 
 let numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1;
 
 function drawTrack() {
-    console.log('Drawing track');
     const offsetX = (canvas.width - trackTextureWidth * trackScale) / 2; // Центрируем текстуру дороги
 
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
             ctx.drawImage(trackImg,
-                          offsetX + i * trackTextureWidth * trackScale - (trackTextureWidth * trackScale) / 1,
+                          offsetX + i * trackTextureWidth * trackScale,
                           trackY + j * trackTextureHeight * trackScale - trackTextureHeight * trackScale,
                           trackTextureWidth * trackScale,
                           trackTextureHeight * trackScale);
@@ -110,8 +117,7 @@ function drawTrack() {
 }
 
 function drawCamel() {
-    console.log('Drawing camel');
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2, camelY, camelWidth, camelHeight);
+    ctx.drawImage(camelFrames[frameIndex], (canvas.width - camelWidth) / 2, camelY, camelWidth, camelHeight);
 
     frameIndex++;
     if (frameIndex >= camelFrames.length) frameIndex = 0;
@@ -119,10 +125,12 @@ function drawCamel() {
 
 function spawnCoin() {
     if (coinSpawnTimer <= 0) {
-        const lane = Math.floor(Math.random() * 3);
-        const x = lanes[lane] - coinSize / 2;
-        coins.push({ x: x, y: -coinSize, lane: lane, frameIndex: 0 });
-        coinSpawnTimer = 100; // Спавн монетки каждые 100 кадров
+        for (let i = 0; i < 3; i++) { // Спавним 3 монетки
+            const lane = Math.floor(Math.random() * 3);
+            const x = lanes[lane] - coinSize / 2;
+            coins.push({ x: x, y: -coinSize, lane: lane, frameIndex: 0 });
+        }
+        coinSpawnTimer = 50; // Спавн монеток каждые 50 кадров
     }
     coinSpawnTimer--;
 }
@@ -147,8 +155,7 @@ function drawCoins() {
         }
 
         // Проверка на столкновение с верблюдом
-        if (coin.y + coinSize > camelY && coin.y < camelY + camelHeight &&
-            coin.lane === currentLane) {
+        if (coin.y + coinSize > camelY && coin.y < camelY + camelHeight) {
             coins.splice(i, 1);
             i--;
             // Добавить логику для начисления очков и т.д.
@@ -156,55 +163,59 @@ function drawCoins() {
     }
 }
 
+function drawTapText() {
+    for (let i = 0; i < tapText.length; i++) {
+        const tap = tapText[i];
+        ctx.globalAlpha = tap.opacity;
+        ctx.drawImage(tap.img, tap.x, tap.y, tap.size, tap.size);
+        ctx.globalAlpha = 1;
+
+        tap.y -= 2; // Подъем текста
+        tap.opacity -= 0.02;
+        if (tap.opacity <= 0) {
+            tapText.splice(i, 1);
+            i--;
+        }
+    }
+}
+
 function gameLoop() {
-    console.log('Game loop running');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawTrack();
     drawCamel();
     spawnCoin();
     drawCoins();
+    drawTapText();
 
     requestAnimationFrame(gameLoop);
 }
 
 function handleKeyPress(event) {
-    if (event.key === 'ArrowLeft' && currentLane > 0) {
-        currentLane--;
-    } else if (event.key === 'ArrowRight' && currentLane < 2) {
-        currentLane++;
-    }
+    // Убираем управление стрелками
 }
 
-// Добавление управления свайпом пальца
-let touchStartX = null;
+function handleTap(event) {
+    const tapX = event.clientX;
+    const tapY = event.clientY;
+    let img = tapText1Img; // По умолчанию х1
 
-function handleTouchStart(event) {
-    touchStartX = event.touches[0].clientX;
-}
-
-function handleTouchMove(event) {
-    if (!touchStartX) return;
-
-    let touchEndX = event.touches[0].clientX;
-    let diffX = touchStartX - touchEndX;
-
-    if (Math.abs(diffX) > 30) {
-        if (diffX > 0 && currentLane > 0) {
-            currentLane--;
-        } else if (diffX < 0 && currentLane < 2) {
-            currentLane++;
+    for (let i = 0; i < coins.length; i++) {
+        const coin = coins[i];
+        if (tapX > coin.x && tapX < coin.x + coinSize && tapY > coin.y && tapY < coin.y + coinSize) {
+            img = tapText2Img; // Если попали по монетке
+            coins.splice(i, 1);
+            break;
         }
-        touchStartX = null;
     }
+
+    tapText.push({ img: img, x: tapX - 25, y: tapY - 25, size: 50, opacity: 1 });
 }
 
 window.addEventListener('keydown', handleKeyPress);
-window.addEventListener('touchstart', handleTouchStart);
-window.addEventListener('touchmove', handleTouchMove);
+window.addEventListener('click', handleTap);
 
 camelImg.onload = () => {
-    console.log('Starting game loop');
     resizeCanvas(); // Изменение размера канваса при загрузке изображения
     gameLoop();
 };
