@@ -40,13 +40,30 @@ for (let i = 1; i <= 36; i++) {
     loadCamelFrame(i);
 }
 
+const propTypes = ['cactus', 'rock'];
+const propImages = [];
+
+const loadProps = () => {
+    for (const type of propTypes) {
+        for (let i = 1; i <= 5; i++) {
+            const img = new Image();
+            img.src = `textures/Props/${type}${i}.png`;
+            img.onload = () => {
+                propImages.push({ type, img });
+            };
+        }
+    }
+};
+
+loadProps();
+
 let frameIndex = 0;
 const camelWidth = 400;
 const camelHeight = 400 * (157 / 278);
 const coinSize = 75;
 
-const trackTextureWidth = 533;
-const trackTextureHeight = 232;
+const trackTextureWidth = 508;
+const trackTextureHeight = 508;
 const trackScale = 1;
 
 let lanes = [
@@ -58,6 +75,7 @@ let currentLane = 1;
 trackY = 0;
 let coinSpawnTimer = 0;
 const coins = [];
+const props = [];
 
 let numTrackTilesX = Math.ceil(canvas.width / (trackTextureWidth * trackScale)) + 1;
 let numTrackTilesY = Math.ceil(canvas.height / (trackTextureHeight * trackScale)) + 1;
@@ -79,10 +97,10 @@ function drawTrack() {
     for (let i = 0; i < numTrackTilesX; i++) {
         for (let j = 0; j < numTrackTilesY; j++) {
             ctx.drawImage(trackImg,
-                          offsetX + i * trackTextureWidth * trackScale,
-                          trackY + j * trackTextureHeight * trackScale - trackTextureHeight * trackScale,
-                          trackTextureWidth * trackScale,
-                          trackTextureHeight * trackScale);
+                offsetX + i * trackTextureWidth * trackScale,
+                trackY + j * trackTextureHeight * trackScale - trackTextureHeight * trackScale,
+                trackTextureWidth * trackScale,
+                trackTextureHeight * trackScale);
         }
     }
     trackY += speed;
@@ -94,7 +112,10 @@ function drawTrack() {
 function drawCamel() {
     frameIndex++;
     if (frameIndex >= camelFrames.length) frameIndex = 0;
+    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+    ctx.shadowBlur = 15;
     ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2, camelY, camelWidth, camelHeight);
+    ctx.shadowBlur = 0; // Убираем тень после рисования верблюда
 }
 
 function spawnCoin() {
@@ -141,10 +162,62 @@ function drawTapText() {
     }
 }
 
+function drawProps() {
+    for (let i = 0; i < props.length; i++) {
+        const prop = props[i];
+        if (prop.img.complete && prop.img.naturalHeight !== 0) {
+            prop.y += speed;
+            ctx.save();
+            ctx.translate(prop.x, prop.y);
+            if (prop.rotation) {
+                const angle = (prop.rotation * Math.PI) / 180;
+                ctx.rotate(angle);
+            }
+            if (prop.flipped) {
+                ctx.scale(-1, 1); // Горизонтальное отзеркаливание
+            }
+            ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+            ctx.shadowBlur = 15;
+            ctx.drawImage(prop.img, -prop.width / 2, -prop.height / 2, prop.width, prop.height);
+            ctx.restore();
+        }
+    }
+    // Изменяем props с помощью метода splice, а не присваивания новой переменной
+    for (let i = props.length - 1; i >= 0; i--) {
+        if (props[i].y >= canvas.height + 100) {
+            props.splice(i, 1); // Удаляем пропсы, вышедшие за экран
+        }
+    }
+}
+
+function spawnProps() {
+    const numProps = Math.floor(Math.random() * 2) + 1; // Спавним от 1 до 2 пропсов
+    for (let i = 0; i < numProps; i++) {
+        const type = propTypes[Math.floor(Math.random() * propTypes.length)];
+        const propImage = propImages.find((img) => img.type === type);
+        if (propImage) {
+            const img = propImage.img;
+            const width = 100; // Фиксированная ширина
+            const height = 100; // Фиксированная высота
+            let x, y;
+            let attempts = 0;
+            do {
+                x = Math.random() * canvas.width;
+                y = -height;
+                attempts++;
+            } while ((x > canvas.width / 3 && x < 2 * canvas.width / 3) && attempts < 10); // Пропускаем центральную линию
+            const rotation = type === 'rock' ? Math.random() * 360 : 0; // Рандомный угол поворота только для камней
+            const flipped = type === 'cactus' && Math.random() > 0.5; // Рандомное отзеркаливание только для кактусов
+            props.push({ type, img, x, y, width, height, rotation, flipped });
+        }
+    }
+}
+
 function updateProgress() {
     const progressBar = document.querySelector('.progress-bar');
     const playerIcon = document.getElementById('player-icon');
     const progressText = document.getElementById('progress-text');
+    const progressBackground = document.querySelector('.progress-background');
     const progressBarHeight = progressBar.clientHeight;
 
     progressText.style.color = 'white';
@@ -153,6 +226,7 @@ function updateProgress() {
     const progressHeight = (progress / 100) * progressBarHeight;
     playerIcon.style.bottom = `${progressHeight}px`;
     progressText.style.bottom = `${progressHeight}px`;
+    progressBackground.style.bottom = `${progressHeight}px`;
     progressText.innerText = `${Math.floor(progress)}%`;
 
     console.log(`Progress: ${progress}, Progress Height: ${progressHeight}`);
@@ -176,6 +250,7 @@ function updateTapBar() {
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawTrack();
+    drawProps();
     drawCamel();
     spawnCoin();
     drawCoins();
@@ -232,4 +307,5 @@ window.addEventListener('touchstart', handleTouch);
 camelImg.onload = () => {
     resizeCanvas();
     gameLoop();
+    setInterval(spawnProps, 1000); // Спавн пропсов каждые 1000 миллисекунд
 };

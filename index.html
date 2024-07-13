@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
             font-family: 'LilitaOne-Regular';
             src: url('Font/LilitaOne-Regular.ttf') format('truetype');
         }
+
         body {
             margin: 0;
             overflow: hidden;
@@ -19,12 +21,14 @@
             background: #000;
             font-family: 'LilitaOne-Regular';
         }
+
         #gameCanvas {
             display: block;
             background: #000;
             width: 100vw;
             height: 100vh;
         }
+
         #ui {
             position: absolute;
             top: 1vh;
@@ -34,6 +38,7 @@
             color: white;
             text-align: center;
         }
+
         .progress-container {
             position: absolute;
             left: 1vw;
@@ -42,6 +47,7 @@
             width: 4vw;
             height: 50vh;
         }
+
         .progress-bar {
             position: relative;
             width: 100%;
@@ -49,6 +55,7 @@
             background-image: url('textures/progress-bar.png');
             background-size: cover;
         }
+
         .player-icon {
             position: absolute;
             bottom: 0;
@@ -59,6 +66,7 @@
             background-image: url('textures/player-icon.png');
             background-size: cover;
         }
+
         .tap-bar-container {
             position: absolute;
             bottom: 0vh;
@@ -70,14 +78,16 @@
             justify-content: center;
             transform: translateX(-50%);
         }
+
         .tap-bar {
-            width: 20vh;
-            height: 2vh;
+            width: 42vw;
+            height: 4vw;
             bottom: -33vh;
             background-image: url('textures/tap-bar.png');
             background-size: cover;
             position: relative;
         }
+
         .tap-fill {
             position: absolute;
             height: 100%;
@@ -86,6 +96,7 @@
             background-image: url('textures/tap-fill.png');
             background-size: cover;
         }
+
         .tap-count {
             position: absolute;
             top: 83%;
@@ -95,6 +106,7 @@
             left: 9vw;
             direction: rtl;
         }
+
         .tap-total {
             position: absolute;
             top: 83%;
@@ -103,6 +115,7 @@
             color: white;
             right: 9vw;
         }
+
         .coin-icon {
             display: inline-block;
             width: 5vh;
@@ -110,6 +123,7 @@
             background-image: url('textures/coin.png');
             background-size: cover;
         }
+
         #progress-text {
             position: absolute;
             bottom: 0;
@@ -118,8 +132,20 @@
             font-family: 'LilitaOne-Regular';
             font-size: 2vh;
         }
+
+        .progress-background {
+            position: absolute;
+            width: 200%;
+            height: 5%;
+            background-color: rgba(66, 50, 119, 0.7);
+            bottom: 0;
+            left: 73%;
+            transform: translate(-50%, 100%);
+            border-radius: 8px;
+        }
     </style>
 </head>
+
 <body>
     <div id="ui">
         <div id="coin-count">
@@ -130,6 +156,7 @@
     <div class="progress-container">
         <div class="progress-bar">
             <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
+            <div class="progress-background" id="progress-background"></div>
             <div id="progress-text">0%</div>
         </div>
     </div>
@@ -143,4 +170,5 @@
     <canvas id="gameCanvas"></canvas>
     <script src="script.js"></script>
 </body>
+
 </html>
