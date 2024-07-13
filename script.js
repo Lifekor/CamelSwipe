@@ -198,14 +198,14 @@ function handleTap(event) {
             coinCount += 2;
             document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
             tapOnCoin = true;
-            progress += 0.08; // Увеличиваем прогресс на 2% за клик по монетке
+            progress += 0.08; // Увеличиваем прогресс на 0.08% за клик по монетке
             break;
         }
     }
     if (!tapOnCoin) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
-        progress += 0.08; // Увеличиваем прогресс на 1% за обычный клик
+        progress += 0.08; // Увеличиваем прогресс на 0.08% за обычный клик
     }
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
     if (taps > 0) {
@@ -218,7 +218,16 @@ function handleTap(event) {
     updateProgress(); // Обновляем прогресс-бар и иконку игрока
 }
 
+function handleTouch(event) {
+    event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
+    for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        handleTap({ clientX: touch.clientX, clientY: touch.clientY });
+    }
+}
+
 window.addEventListener('click', handleTap);
+window.addEventListener('touchstart', handleTouch);
 
 camelImg.onload = () => {
     resizeCanvas();
