@@ -47,11 +47,10 @@
         }
         .player-icon {
             position: absolute;
-            top: 3%;
+            bottom: 0;
             left: -35%;
             width: 39px;
             height: 35px;
-            scale: 70%;
             background-image: url('textures/player-icon.png');
             background-size: cover;
         }
@@ -77,7 +76,6 @@
             height: 100%;
             width: 100%;
             bottom: 0px;
-            scale: 100%;
             background-image: url('textures/tap-fill.png');
             background-size: cover;
         }
@@ -105,8 +103,11 @@
             background-size: cover;
         }
         #progress-text {
-            font-family: 'LilitaOne-Regular';
+            position: absolute;
+            bottom: 0;
+            transform: translateY(100%);
             color: white;
+            font-family: 'LilitaOne-Regular';
         }
     </style>
 </head>
@@ -120,7 +121,7 @@
     <div class="progress-container">
         <div class="progress-bar">
             <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
-            <div id="progress-text" style="position: absolute; bottom: 0; transform: translateY(100%);"></div>
+            <div id="progress-text">0%</div>
         </div>
     </div>
     <div class="tap-bar-container">
