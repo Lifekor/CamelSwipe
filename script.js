@@ -125,7 +125,7 @@ function drawCoins() {
 }
 
 function drawTapText() {
-    ctx.font = "20px 'LilitaOne-Regular'"; // Устанавливаем шрифт и размер текста
+    ctx.font = "2vh 'LilitaOne-Regular'"; // Устанавливаем шрифт и размер текста
     ctx.fillStyle = "white"; // Устанавливаем цвет текста
     for (let i = 0; i < tapText.length; i++) {
         const tap = tapText[i];
