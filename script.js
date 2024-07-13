@@ -198,14 +198,14 @@ function handleTap(event) {
             coinCount += 2;
             document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
             tapOnCoin = true;
-            progress += 2; // Увеличиваем прогресс на 2% за клик по монетке
+            progress += 0.08; // Увеличиваем прогресс на 2% за клик по монетке
             break;
         }
     }
     if (!tapOnCoin) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
-        progress += 1; // Увеличиваем прогресс на 1% за обычный клик
+        progress += 0.08; // Увеличиваем прогресс на 1% за обычный клик
     }
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
     if (taps > 0) {
