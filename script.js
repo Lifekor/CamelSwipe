@@ -3,6 +3,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
     progressText.innerText = `${Math.floor(progress)}%`;
 });
 
+    const startButton = document.getElementById('start-button');
+    let countdown = 5;
+    startButton.innerText = countdown;
+
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+            startButton.innerText = countdown;
+        } else {
+            startButton.innerText = 'START';
+            clearInterval(countdownInterval);
+            startButton.disabled = false;
+        }
+    }, 1000);
+
+    startButton.addEventListener('click', () => {
+        document.getElementById('welcome-screen').style.display = 'none';
+        gameLoop(); // Запуск основного игрового цикла
+   
+});
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -161,6 +182,7 @@ function updateTapBar() {
     tapFill.style.width = `${(taps / 1000) * 100}%`;
 }
 
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawTrack();
@@ -222,5 +244,4 @@ window.addEventListener('touchstart', handleTouch);
 
 trackFrames[0].onload = () => {
     resizeCanvas();
-    gameLoop();
 };
