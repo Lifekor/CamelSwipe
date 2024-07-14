@@ -18,12 +18,14 @@
             height: 100vh;
             background: #000;
             font-family: 'LilitaOne-Regular';
+            position: relative;
         }
         #gameCanvas {
             display: block;
-            background: #000;
+            position: absolute;
             width: 100vw;
             height: 100vh;
+            pointer-events: none; /* Чтобы клики проходили сквозь canvas */
         }
         #ui {
             position: absolute;
@@ -33,7 +35,6 @@
             transform: translateX(-50%);
             color: white;
             text-align: center;
-            z-index: 10; /* Повышаем z-index */
         }
         .progress-container {
             position: absolute;
@@ -42,7 +43,6 @@
             transform: translateY(-50%);
             width: 4vw;
             height: 50vh;
-            z-index: 10; /* Повышаем z-index */
         }
         .progress-bar {
             position: relative;
@@ -61,18 +61,16 @@
             background-image: url('textures/player-icon.png');
             background-size: cover;
         }
-     .progress-background {
-    position: absolute;
-    width: 200%;
-    height: 5%;
-    background-color: rgba(66, 50, 119, 0.7);
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 100%);
-    border-radius: 5px;
-    z-index: -1; /* Добавьте это, чтобы фон был позади текста */
-}
-
+        .progress-background {
+            position: absolute;
+            width: 200%;
+            height: 5%;
+            background-color: rgba(66, 50, 119, 0.7);
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 100%);
+            border-radius: 5px;
+        }
         .tap-bar-container {
             position: absolute;
             bottom: 0vh;
@@ -83,7 +81,6 @@
             align-items: center;
             justify-content: center;
             transform: translateX(-50%);
-            z-index: 10; /* Повышаем z-index */
         }
         .tap-bar {
             width: 42vw;
@@ -144,11 +141,10 @@
     </div>
     <div class="progress-container">
         <div class="progress-bar">
-    <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
-    <div class="progress-background"></div> <!-- Прямоугольник фона -->
-    <div id="progress-text">0%</div> <!-- Текст с процентами -->
-</div>
-
+            <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
+            <div id="progress-text">0%</div>
+            <div class="progress-background"></div>
+        </div>
     </div>
     <div class="tap-bar-container">
         <div class="tap-count" id="remaining-taps">1000</div>

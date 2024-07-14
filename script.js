@@ -11,7 +11,7 @@ let tapTimer = 0;
 let coinCount = 0;
 let taps = 1000;
 let progress = 0;
-let speed = 5;
+let speed = 4;
 
 const trackFrames = [];
 const loadTrackFrame = (i) => {
@@ -39,9 +39,11 @@ let frameCount = 0;
 const coinSize = 75;
 
 let lanes = [
-    canvas.width / 4,
-    canvas.width / 2,
-    3 * canvas.width / 4
+    canvas.width * 0.5,  // Первая линия (30% от ширины экрана)
+    canvas.width * 0.5,  // Вторая линия (40% от ширины экрана)
+    canvas.width * 0.5,  // Третья линия (50% от ширины экрана)
+    canvas.width * 0.5,  // Четвертая линия (60% от ширины экрана)
+    canvas.width * 0.5   // Пятая линия (70% от ширины экрана)
 ];
 let currentLane = 1;
 let coinSpawnTimer = 0;
@@ -50,9 +52,13 @@ const coins = [];
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    lanes[0] = canvas.width / 4;
-    lanes[1] = canvas.width / 2;
-    lanes[2] = 3 * canvas.width / 4;
+    lanes = [
+        canvas.width * 0.40,
+        canvas.width * 0.45,
+        canvas.width * 0.50,
+        canvas.width * 0.55,
+        canvas.width * 0.60
+    ];
 }
 window.addEventListener('resize', resizeCanvas);
 
@@ -68,20 +74,31 @@ function spawnCoin() {
     if (coinSpawnTimer <= 0) {
         const numCoins = Math.floor(Math.random() * 3) + 1; // Спавним от 1 до 3 монеток
         for (let i = 0; i < numCoins; i++) {
-            const x = Math.random() * canvas.width; // Случайная позиция по оси X
-            const y = -coinSize - Math.random() * canvas.height; // Спавн за пределами экрана сверху, на случайной высоте
-            coins.push({ x: x, y: y, frameIndex: 0 });
+            const laneIndex = Math.floor(Math.random() * lanes.length);
+            const startX = canvas.width / 2; // Начальная позиция по X - центр экрана
+            const y = canvas.height * 0.35; // Начальная позиция по Y ближе к центру
+            coins.push({ startX: startX, endX: lanes[laneIndex], laneIndex: laneIndex, y: y, frameIndex: 0, scale: 0.2 });
         }
-        coinSpawnTimer = 50; // Спавн монеток каждые 50 кадров
+        coinSpawnTimer = 40; // Спавн монеток каждые 50 кадров
     }
     coinSpawnTimer--;
 }
+
 
 function drawCoins() {
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
         coin.y += speed;
-        ctx.drawImage(coinFrames[coin.frameIndex], coin.x, coin.y, coinSize, coinSize);
+        coin.scale = Math.min(1, coin.scale + 0.01); // Увеличиваем размер монетки
+
+        // Интерполяция координаты X в зависимости от текущей позиции Y
+        const t = (coin.y - canvas.height * 0.1) / (canvas.height - canvas.height * 0.1);
+        const endX = lanes[coin.laneIndex];
+        const x = coin.startX + t * (endX - coin.startX) * (2.5 + t); // Увеличиваем расстояние между монетами ближе к низу экрана
+
+        const coinSizeScaled = coinSize * coin.scale;
+        coin.x = x; // Сохраняем текущую позицию по X для обработки кликов
+        ctx.drawImage(coinFrames[coin.frameIndex], x - coinSizeScaled / 2, coin.y - coinSizeScaled / 2, coinSizeScaled, coinSizeScaled);
         coin.frameIndex++;
         if (coin.frameIndex >= coinFrames.length) coin.frameIndex = 0;
         if (coin.y > canvas.height) {
@@ -91,8 +108,10 @@ function drawCoins() {
     }
 }
 
+
+
 function drawTapText() {
-    ctx.font = "2vh 'LilitaOne-Regular'"; // Устанавливаем шрифт и размер текста
+    ctx.font = "3vh 'LilitaOne-Regular'"; // Увеличиваем размер текста
     ctx.fillStyle = "white"; // Устанавливаем цвет текста
     for (let i = 0; i < tapText.length; i++) {
         const tap = tapText[i];
@@ -115,19 +134,13 @@ function updateProgress() {
     const progressBackground = document.querySelector('.progress-background');
     const progressBarHeight = progressBar.clientHeight;
 
+    progressText.style.color = 'white';
+    progressText.style.fontFamily = 'LilitaOne-Regular';
+
     const progressHeight = (progress / 100) * progressBarHeight;
-
-    // Сначала обновляем положение и размер фона
-    progressBackground.style.bottom = `${progressHeight}px`;
-    progressBackground.style.width = '200%'; // Убедитесь, что это соответствует вашим требованиям
-    progressBackground.style.height = '5%'; // Убедитесь, что это соответствует вашим требованиям
-    progressBackground.style.transform = 'translateY(100%)';
-    progressBackground.style.left = '50%'; // Центрируем фон по горизонтали
-    progressBackground.style.transform = 'translate(-50%, 100%)'; // Центрируем фон по горизонтали и вертикали
-
-    // Затем обновляем положение текста и иконки
     playerIcon.style.bottom = `${progressHeight}px`;
     progressText.style.bottom = `${progressHeight}px`;
+    progressBackground.style.bottom = `${progressHeight}px`;
     progressText.innerText = `${Math.floor(progress)}%`;
 
     console.log(`Progress: ${progress}, Progress Height: ${progressHeight}`);
@@ -135,7 +148,6 @@ function updateProgress() {
         progress = 100;
     }
 }
-
 
 function updateTapBar() {
     const tapFill = document.getElementById('tap-fill');
@@ -167,7 +179,10 @@ function handleTap(event) {
     let tapOnCoin = false;
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
-        if (tapX > coin.x && tapX < coin.x + coinSize && tapY > coin.y && tapY < coin.y + coinSize) {
+        const coinSizeScaled = coinSize * coin.scale; // Учитываем масштаб монеты
+        const coinX = coin.x - coinSizeScaled / 2;
+        const coinY = coin.y - coinSizeScaled / 2;
+        if (tapX > coinX && tapX < coinX + coinSizeScaled && tapY > coinY && tapY < coinY + coinSizeScaled) {
             tapTextContent = 'x2'; // Если попали по монетке
             coins.splice(i, 1);
             coinCount += 2;
@@ -192,6 +207,7 @@ function handleTap(event) {
     if (progress > 100) progress = 100; // Не позволяем прогрессу превышать 100%
     updateProgress(); // Обновляем прогресс-бар и иконку игрока
 }
+
 
 function handleTouch(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
