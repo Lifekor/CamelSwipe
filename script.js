@@ -3,25 +3,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     progressText.innerText = `${Math.floor(progress)}%`;
 });
 
-    const startButton = document.getElementById('start-button');
-    let countdown = 5;
-    startButton.innerText = countdown;
-
-    const countdownInterval = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-            startButton.innerText = countdown;
-        } else {
-            startButton.innerText = 'START';
-            clearInterval(countdownInterval);
-            startButton.disabled = false;
-        }
-    }, 1000);
-
-    startButton.addEventListener('click', () => {
-        document.getElementById('welcome-screen').style.display = 'none';
-        gameLoop(); // Запуск основного игрового цикла
-   
+const startButton = document.getElementById('start-button');
+startButton.addEventListener('click', () => {
+    document.getElementById('welcome-screen').style.display = 'none';
+    gameLoop(); // Запуск основного игрового цикла
 });
 
 const canvas = document.getElementById('gameCanvas');
@@ -34,15 +19,8 @@ let taps = 1000;
 let progress = 0;
 let speed = 4;
 
-const trackFrames = [];
-const loadTrackFrame = (i) => {
-    const img = new Image();
-    img.src = `textures/track/track_${String(i).padStart(4, '0')}.png`;
-    trackFrames.push(img);
-};
-for (let i = 1; i <= 64; i++) {
-    loadTrackFrame(i);
-}
+const trackImg = new Image();
+trackImg.src = 'textures/track.jpg';
 
 const coinFrames = [];
 const loadCoinFrame = (i) => {
@@ -54,10 +32,21 @@ for (let i = 1; i <= 50; i++) {
     loadCoinFrame(i);
 }
 
+const camelFrames = [];
+const loadCamelFrame = (i) => {
+    const img = new Image();
+    img.src = `textures/camel/camel_run_${i}.png`;
+    camelFrames.push(img);
+};
+for (let i = 1; i <= 14; i++) {
+    loadCamelFrame(i);
+}
+
 let frameIndex = 0;
-let trackFrameIndex = 0;
 let frameCount = 0;
 const coinSize = 75;
+const camelWidth = 1080 / 4;
+const camelHeight = 1920 / 4;
 
 let lanes = [
     canvas.width * 0.5,  // Первая линия (30% от ширины экрана)
@@ -84,11 +73,16 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 
 function drawTrack() {
+    ctx.drawImage(trackImg, 0, 0, canvas.width, canvas.height);
+}
+
+function drawCamel() {
     frameCount++;
-    if (frameCount % 2 === 0) { // Замедляем скорость прокрутки фона
-        trackFrameIndex = (trackFrameIndex + 1) % trackFrames.length;
+    if (frameCount % 2 === 0) {
+        frameIndex++;
+        if (frameIndex >= camelFrames.length) frameIndex = 0;
     }
-    ctx.drawImage(trackFrames[trackFrameIndex], 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2.5, canvas.height - camelHeight - 30, camelWidth, camelHeight);
 }
 
 function spawnCoin() {
@@ -97,14 +91,13 @@ function spawnCoin() {
         for (let i = 0; i < numCoins; i++) {
             const laneIndex = Math.floor(Math.random() * lanes.length);
             const startX = canvas.width / 2; // Начальная позиция по X - центр экрана
-            const y = canvas.height * 0.35; // Начальная позиция по Y ближе к центру
+            const y = canvas.height * 0.55; // Начальная позиция по Y ближе к центру
             coins.push({ startX: startX, endX: lanes[laneIndex], laneIndex: laneIndex, y: y, frameIndex: 0, scale: 0.2 });
         }
         coinSpawnTimer = 40; // Спавн монеток каждые 50 кадров
     }
     coinSpawnTimer--;
 }
-
 
 function drawCoins() {
     for (let i = 0; i < coins.length; i++) {
@@ -128,8 +121,6 @@ function drawCoins() {
         }
     }
 }
-
-
 
 function drawTapText() {
     ctx.font = "3vh 'LilitaOne-Regular'"; // Увеличиваем размер текста
@@ -182,10 +173,10 @@ function updateTapBar() {
     tapFill.style.width = `${(taps / 1000) * 100}%`;
 }
 
-
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawTrack();
+    drawCamel();
     spawnCoin();
     drawCoins();
     drawTapText();
@@ -230,7 +221,6 @@ function handleTap(event) {
     updateProgress(); // Обновляем прогресс-бар и иконку игрока
 }
 
-
 function handleTouch(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
     for (let i = 0; i < event.touches.length; i++) {
@@ -242,6 +232,6 @@ function handleTouch(event) {
 window.addEventListener('click', handleTap);
 window.addEventListener('touchstart', handleTouch);
 
-trackFrames[0].onload = () => {
+trackImg.onload = () => {
     resizeCanvas();
 };
