@@ -1,0 +1,170 @@
+# Python specific
+*.py[cod]
+__pycache__/
+*.so
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# VSCode settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+# Usually these files are written by a python script from a template
+# before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+.coverage.*
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+doc/source/generated/
+docs/generated/
+
+# PyBuilder
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.env.*
+.venv
+venv/
+ENV/
+env.bak/
+env.bak
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# dotenv
+.env
+.env.local
+.env.*.local
+.env.example
+
+# FastAPI specific
+*test.db
+
+# Docker
+docker-compose*.yml
+Dockerfile
+Dockerfile.*
+.dockerignore
+docker-compose.override.yml
+
+# Server specific
+logs/
+*.log
+*.pid
+*.out
+*.log
+*.swp
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Project directories
+**/__pycache__/
+**/venv/
+**/venv/*
+**/dist/
+**/build/
+**/.env
+**/.venv
+**/.venv/*
+**/.env.*
+**/.env.*
+
+# Coverage reports
+htmlcov/
+coverage/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+
+# pyenv
+python-version
+
+# Mac specific
+.DS_Store
