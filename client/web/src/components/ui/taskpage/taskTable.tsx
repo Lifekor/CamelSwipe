@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { initUtils } from '@tma.js/sdk'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useNecessary } from '../../../hooks/necessary'
 import useApi from '../../../requestProvider/apiHandler'
 import { ReactComponent as Arrow } from '../../images/arrow.svg'
 import { ReactComponent as Coin } from '../../images/coin.svg'
@@ -12,17 +14,40 @@ import { ReactComponent as TikTok } from '../../images/taskpage/tiktok.svg'
 import { ReactComponent as Twitter } from '../../images/taskpage/twitter.svg'
 import { ReactComponent as Welcome } from '../../images/taskpage/welcome.svg'
 import { ReactComponent as Youtube } from '../../images/taskpage/youtube.svg'
-
+import { missionsInterface } from '../../models'
 const TaskTable = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const {identityId} = useNecessary()
+  const [missions, setMissions] = useState<missionsInterface>()
 
   const api = useApi()
+
+  const getMissions = async (): Promise<void> =>  {
+    if (!identityId) return
+    const res = await api<missionsInterface>({
+      method: 'GET',
+      url: '/mission/',
+      headers: {
+        "x-user-id": identityId
+      }
+    })
+    if (res) {
+      setMissions(res);
+    }
+  } 
+
+  useEffect(() => {
+    getMissions()
+  }, [identityId])
 
   const startMission = async (id:string) => {
     const res = await api({
       method: 'POST',
       url: `/mission/navigate?mission_id=${id}`,
+      headers: {
+       'user-id': identityId
+      }
     })
   }
 
@@ -32,8 +57,11 @@ const TaskTable = () => {
     const res = await api({
       method: 'POST',
       url: `/mission/check?mission_id=${id}`,
+      headers: {
+        'user-id': identityId
+       }
     })
-   /*  await getMissions() */
+    await getMissions()
     setLoading(false)
    }catch(e) {
     setLoading(false)
@@ -45,9 +73,12 @@ const TaskTable = () => {
     const res = await api({
       method: 'POST',
       url: `/mission/claim?mission_id=${id}`,
+      headers: {
+        'user-id': identityId
+       }
     })
-    /* await getMissions()
-    await getCoin() */
+    await getMissions()
+   /*  await getCoin() */
   }
 
   interface statusProps {
@@ -58,22 +89,22 @@ const TaskTable = () => {
   }
 
  const GetStatus = ({ status, id, link, type }: statusProps) => {
-    /* const utils = initUtils() */
+    const utils = initUtils()
 
     const handleButtonClick = async (id:string, link:string) => {
       try {
           if (type === 'Telegram') {
-              /* utils.openTelegramLink(link) */
+              utils.openTelegramLink(link)
               await startMission(id)
-              /* getMissions() */
+              getMissions()
             } else if(type === 'Friend') {
               navigate('/friends')
             } else if(type === 'Boost') {
               navigate('/')
             } else {
-              /* utils.openLink(link) */
+              utils.openLink(link)
               await startMission(id)
-              /* getMissions() */
+              getMissions()
             }
       } catch (error) {
         console.error('Error verifying reward', error);
@@ -84,9 +115,9 @@ const TaskTable = () => {
       case 'open':
         return (
           <div>
-            <div className='w-[50px] h-[30px] flex items-center justify-center px-10 border border-myColor-400 text-myColor-400 rounded'
+            <div className='w-[50px] h-[30px] flex items-center justify-center'
             onTouchStart={() => handleButtonClick(id, link)}>
-                  <p className='font-medium'>Start</p>
+                  <Arrow className=''/>
             </div>
           </div>
         );
@@ -147,22 +178,22 @@ const TaskTable = () => {
 	return (
 		<>
     <div className='h-[300px] overflow-y-scroll'>
-
-      <div  className={`flex justify-between mt-5 items-center text-sm py-2 px-2 border-opacity-0 text-white bg-black rounded-3xl shadow-md shadow-myColor-150`} >
+    {missions?.data.map((mission) => (
+      <div  className={`flex justify-between mt-5 items-center text-sm py-2 px-2 border-opacity-0 text-white bg-black rounded-3xl shadow-md shadow-myColor-150 h-[60px]`} >
       <div className='flex gap-2 items-center ml-2'>
-      123
+       <GetIcon icon={mission.icon_type}/>
         <div className='flex-col ml-2'>
-          <p className='font-medium text-[12px]'>asdasda</p>
+          <p className='font-medium text-[12px]'>{mission.name}</p>
             <div className='flex items-center'>
               <Coin className='ml-3'/>
-              <p className='text-[13px] font-medium'>+10.000</p>
+              <p className='text-[13px] font-medium'>+{mission.reward}</p>
             </div>
           </div>
         </div>
 
-        <Arrow className='mr-3'>123</Arrow>
+        <GetStatus status={mission.status} type={mission.icon_type} id={mission.id} link={mission.id}/>
      </div>
-
+    ))}
     </div>
 		</>
 	)
