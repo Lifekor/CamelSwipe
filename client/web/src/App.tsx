@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ErrorProvider, useError } from './requestProvider/errorContext'
+import ErrorSnackbar from './requestProvider/errorSnackbar'
+import Router from './router/router'
+
+interface TelegramWebApp {
+	close: () => void;
+  expand: () => void
+}
+
+const tg: TelegramWebApp = (window as any).Telegram.WebApp;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <>
+   <ErrorProvider>
+      <AppContent/>
+   </ErrorProvider>
+   </>
   );
+}
+
+function AppContent() {
+  const { error, setError } = useError();
+  return (
+    <>
+    <Router/>
+    <ErrorSnackbar error={error} onClose={() => setError('')} />
+    </>
+  )
 }
 
 export default App;
