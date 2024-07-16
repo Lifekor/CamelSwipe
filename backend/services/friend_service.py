@@ -31,7 +31,7 @@ class FriendsService:
         for friend in friends:
             result.append(FriendsDataDto(inviter_id=friend['inviter_id'],
                                          referral_username=friend['referral_username'],
-                                         missions_finished=friend['missions_finished']))
+                                         missions_finished=friend['coins']))
 
         inviter_name = ""
         user_inviter = await self.friends_collection.find_one({'referral_id': user['telegram_id']})

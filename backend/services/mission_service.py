@@ -16,7 +16,6 @@ BOT_TOKEN = 'BOT token from os' #TODO
 
 
 class MissionService:
-    wallet_collection = None
     friends_collection = None
     user_mission_collection = None
     user_collection = None
@@ -26,7 +25,6 @@ class MissionService:
         self.mission_collection = db[Collections.MISSIONS]
         self.user_mission_collection = db[Collections.USER_MISSIONS]
         self.user_collection = db[Collections.USERS]
-        self.wallet_collection = db[Collections.WALLETS]
         self.friends_collection = db[Collections.FRIENDS]
 
     async def get_async(self, user_id: str) -> UserMissionDataDto:

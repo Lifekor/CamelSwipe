@@ -8,4 +8,4 @@ class Friend(BaseModel):
     referral_username: str
     referral_id: int
     date_added: datetime.datetime
-    missions_finished: int
+    coins: int
