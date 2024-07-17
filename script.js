@@ -112,15 +112,16 @@ function spawnCoin() {
     if (coinSpawnTimer <= 0) {
         const numCoins = Math.floor(Math.random() * 3) + 1; // Спавним от 1 до 3 монеток
         for (let i = 0; i < numCoins; i++) {
-            const laneIndex = Math.floor(Math.random() * lanes.length);
             const startX = canvas.width / 2; // Начальная позиция по X - центр экрана
-            const y = canvas.height * 0.55; // Начальная позиция по Y ближе к центру
-            coins.push({ startX: startX, endX: lanes[laneIndex], laneIndex: laneIndex, y: y, frameIndex: 0, scale: 0.2 });
+            const startY = canvas.height / 1.6; // Начальная позиция по Y - центр экрана
+            const laneIndex = Math.floor(Math.random() * lanes.length);
+            coins.push({ startX: startX, startY: startY, endX: lanes[laneIndex], laneIndex: laneIndex, y: startY, frameIndex: 0, scale: 0.2 });
         }
         coinSpawnTimer = 60; // Спавн монеток каждые 50 кадров
     }
     coinSpawnTimer--;
 }
+
 
 function drawCoins() {
     for (let i = 0; i < coins.length; i++) {
@@ -128,10 +129,10 @@ function drawCoins() {
         coin.y += speed;
         coin.scale = Math.min(1, coin.scale + 0.01); // Увеличиваем размер монетки
 
-        // Интерполяция координаты X в зависимости от текущей позиции Y
-        const t = (coin.y - canvas.height * 0.1) / (canvas.height - canvas.height * 0.1);
+        // Интерполяция координаты X и Y в зависимости от текущей позиции Y
+        const t = (coin.y - coin.startY) / (canvas.height - coin.startY);
         const endX = lanes[coin.laneIndex];
-        const x = coin.startX + t * (endX - coin.startX) * (2.5 + t); // Увеличиваем расстояние между монетами ближе к низу экрана
+        const x = coin.startX + t * (endX - coin.startX) * (4 + t); // Еще сильнее увеличиваем расстояние между монетами ближе к низу экрана
 
         const coinSizeScaled = coinSize * coin.scale;
         coin.x = x; // Сохраняем текущую позицию по X для обработки кликов
