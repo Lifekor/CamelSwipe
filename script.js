@@ -1,12 +1,34 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     const progressText = document.getElementById('progress-text');
     progressText.innerText = `${Math.floor(progress)}%`;
-});
-
-const startButton = document.getElementById('start-button');
-startButton.addEventListener('click', () => {
-    document.getElementById('welcome-screen').style.display = 'none';
+    resizeCanvas();
     gameLoop(); // Запуск основного игрового цикла
+
+    const tapFill = document.getElementById('tap-fill');
+    const remainingTaps = document.getElementById('remaining-taps');
+    const totalTaps = document.getElementById('total-taps');
+
+    let taps = 1000;
+    const maxTaps = 1000;
+
+    function updateTapFill() {
+        const fillPercentage = taps / maxTaps;
+        tapFill.style.width = `${fillPercentage * 100}%`;
+        tapFill.style.left = '0';
+
+    }
+
+    // Пример уменьшения количества тапов
+    function decreaseTaps() {
+        if (taps > 0) {
+            taps -= 25;
+            remainingTaps.textContent = taps;
+            updateTapFill();
+        }
+    }
+
+    // Вызовите decreaseTaps() при необходимости, чтобы увидеть эффект
+    updateTapFill(); // Изначальное обновление
 });
 
 const canvas = document.getElementById('gameCanvas');
@@ -17,10 +39,10 @@ let tapTimer = 0;
 let coinCount = 0;
 let taps = 1000;
 let progress = 0;
-let speed = 4;
+let speed = 2;
 
 const trackImg = new Image();
-trackImg.src = 'textures/track.jpg';
+trackImg.src = 'textures/track.png';
 
 const coinFrames = [];
 const loadCoinFrame = (i) => {
@@ -28,7 +50,7 @@ const loadCoinFrame = (i) => {
     img.src = `textures/Coins/coin_${String(i).padStart(4, '0')}.png`;
     coinFrames.push(img);
 };
-for (let i = 1; i <= 50; i++) {
+for (let i = 1; i <= 25; i++) {
     loadCoinFrame(i);
 }
 
@@ -44,7 +66,7 @@ for (let i = 1; i <= 14; i++) {
 
 let frameIndex = 0;
 let frameCount = 0;
-const coinSize = 75;
+const coinSize = 100;
 const camelWidth = 1080 / 4;
 const camelHeight = 1920 / 4;
 
@@ -82,7 +104,7 @@ function drawCamel() {
         frameIndex++;
         if (frameIndex >= camelFrames.length) frameIndex = 0;
     }
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2.5, canvas.height - camelHeight - 30, camelWidth, camelHeight);
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2.5, canvas.height - camelHeight - 5, camelWidth, camelHeight);
 }
 
 function spawnCoin() {
@@ -94,7 +116,7 @@ function spawnCoin() {
             const y = canvas.height * 0.55; // Начальная позиция по Y ближе к центру
             coins.push({ startX: startX, endX: lanes[laneIndex], laneIndex: laneIndex, y: y, frameIndex: 0, scale: 0.2 });
         }
-        coinSpawnTimer = 40; // Спавн монеток каждые 50 кадров
+        coinSpawnTimer = 60; // Спавн монеток каждые 50 кадров
     }
     coinSpawnTimer--;
 }
