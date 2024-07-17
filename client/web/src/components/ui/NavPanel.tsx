@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ReactComponent as Friends } from '../images/friends.svg'
 import { ReactComponent as Home } from '../images/home.svg'
+import rocket from '../images/rocket.png'
 import { ReactComponent as Tasks } from '../images/tasks.svg'
 
 
@@ -33,8 +34,6 @@ const NavPanel = () => {
 						<p className='text-[10px] text-center tracking-wider' style={{ color: activeLink === '/admin' ? 'white' : '#616161' }}>Admin</p>
 					</Link> */}
 
-					
-
 					<Link to={'/tasks'} className='flex flex-col items-center'>
 						<Tasks style={{ fill: activeLink === '/tasks' ? 'white' : '#616161' }} className='ml-2' />
 						<p className='text-[10px] text-center  tracking-wider' style={{ color: activeLink === '/tasks' ? 'white' : '#616161' }}>Tasks</p>
@@ -43,6 +42,11 @@ const NavPanel = () => {
 					<Link to={'/friends'} className='flex flex-col items-center'>
 						<Friends style={{ fill: activeLink === '/friends' ? 'white' : '#616161' }} />
 						<p className='text-[10px] text-center tracking-wider' style={{ color: activeLink === '/friends' ? 'white' : '#616161' }}>Friends</p>
+					</Link>
+
+					<Link to={'/boost'} className='flex flex-col items-center'>
+						<img src={rocket} className='w-[30px]' style={{ fill: activeLink === '/boost' ? 'white' : '#616161' }} />
+						<p className='text-[10px] text-center tracking-wider' style={{ color: activeLink === '/boost' ? 'white' : '#616161' }}>Upgrades</p>
 					</Link>
 
 					

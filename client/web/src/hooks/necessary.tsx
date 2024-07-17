@@ -1,5 +1,6 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import background from '../components/images/background.png'
+import balance from '../components/images/balance.png'
 import { idInterface } from '../components/models'
 import useStore from '../components/store/zustand'
 import NavPanel from '../components/ui/NavPanel'
@@ -7,7 +8,7 @@ import useApi from '../requestProvider/apiHandler'
 import { useTelegram } from './useTelegram'
 
 interface NavContextType {
-
+  identityId: string;
 }
 
 const NavContext = createContext<NavContextType | undefined>(undefined);
@@ -28,17 +29,18 @@ interface NavPanelProviderProps {
 
 export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   const api = useApi()
-  const [identityId, setIdentityId] = useState<string>()
+  const [identityId, setIdentityId] = useState<string>('')
   const {updateRole} = useStore()
 
   const id = 2010808497
   const {userId, user, name} = useTelegram()
+  const once = useRef<boolean>(false)
 
 
   const getId = async (): Promise<void> => {
     const res = await api<idInterface>({
       method: 'POST',
-      url: `/auth/sign-in?user_id=${id}&username=${user !== null ? user : 'kwed1'}`
+      url: `/auth/sign-in?user_id=${userId}&username=${user !== null ? user : name}`
     })
     if (res) {
       updateRole(res?.role)
@@ -47,21 +49,30 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   }
 
   useEffect(() => {
-    getId()
-  }, [identityId])
+    if (!once.current) {
+      getId()
+      once.current = true
+    }
+  }, [])
 
   return (
-    <NavContext.Provider value={{}}>
+    <NavContext.Provider value={{identityId}}>
     <div className='relative'>
     <img src={background} alt="" className='w-full' />
-    <div className='absolute w-full z-10 top-36'>
-      <div className="bg-myColor-700 rounded-t-3xl text-center w-full">
-        {children}
-      </div>
-    </div>
+
+    <div className='absolute top-4 right-4'>
+    <img src={balance} alt="" className='relative' />
+    <p className='absolute top-[6px] right-2 text-white'>123</p>
+  
     </div>
 
-      <NavPanel />
+      <div className='absolute w-full z-10 top-36'>
+        <div className="bg-myColor-700 rounded-t-3xl text-center w-full pb-[100px]">
+          {children}
+        </div>
+      </div>
+    </div>
+    <NavPanel />
     </NavContext.Provider>
   );
 };
