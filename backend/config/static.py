@@ -1,0 +1,1 @@
+BOT_TOKEN = '7232813998:AAEDGyj9riY44ZKxTza_HdxrmfP9MHKAteE' #todo move to os

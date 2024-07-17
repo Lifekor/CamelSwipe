@@ -6,13 +6,13 @@ from bson import ObjectId
 
 from config.collections import Collections
 from config.database import db
+from config.static import BOT_TOKEN
 from exceptions.custom_exception import CustomException
 from models.missions.mission import Mission
 from models.missions.mission_status import MissionStatus
 from models.missions.user_missions import UserMission
 from schemas.missions.missions_dto import UserMissionDataDto, UserMissionDto
 
-BOT_TOKEN = 'BOT token from os' #TODO
 
 
 class MissionService:

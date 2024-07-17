@@ -28,5 +28,6 @@ async def startup_event():
     pass
 
 app.include_router(auth_route.router, prefix="/auth", tags=["auth"])
+app.include_router(boost_route.router, prefix="/boost", tags=["boost"])
 app.include_router(mission_route.router, prefix="/mission", tags=["mission"])
 app.include_router(friends_route.router, prefix="/friend", tags=["friend"])
