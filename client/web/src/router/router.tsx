@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import { NavPanelProvider } from '../hooks/necessary'
+import Boostpage from '../pages/boostpage'
 import Friendspage from '../pages/friendspage'
 import Homepage from '../pages/homepage'
 import Taskspage from '../pages/taskspage'
@@ -21,6 +22,11 @@ const Router = () => {
 				<Route path='/friends' element={
 					<NavPanelProvider>
 						  <Friendspage/>
+					</NavPanelProvider>
+				  }/>
+				<Route path='/boost' element={
+					<NavPanelProvider>
+						  <Boostpage/>
 					</NavPanelProvider>
 				  }/>
 		</Routes>
