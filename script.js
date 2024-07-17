@@ -13,9 +13,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function updateTapFill() {
         const fillPercentage = taps / maxTaps;
-        tapFill.style.width = `${fillPercentage * 100}%`;
-        tapFill.style.left = '0';
-
+        tapFill.style.transform = `scaleX(${fillPercentage})`; // Масштабируем fill от 0 до 1
     }
 
     // Пример уменьшения количества тапов
@@ -67,8 +65,8 @@ for (let i = 1; i <= 14; i++) {
 let frameIndex = 0;
 let frameCount = 0;
 const coinSize = 100;
-const camelWidth = 1080 / 4;
-const camelHeight = 1920 / 4;
+const camelWidth = 1080 / 3;
+const camelHeight = 1920 / 3;
 
 let lanes = [
     canvas.width * 0.5,  // Первая линия (30% от ширины экрана)
@@ -104,7 +102,10 @@ function drawCamel() {
         frameIndex++;
         if (frameIndex >= camelFrames.length) frameIndex = 0;
     }
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - camelWidth / 2.5, canvas.height - camelHeight - 5, camelWidth, camelHeight);
+    const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
+    const scaledCamelWidth = camelWidth * camelScale;
+    const scaledCamelHeight = camelHeight * camelScale;
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 3, canvas.height - scaledCamelHeight - 5, scaledCamelWidth, scaledCamelHeight);
 }
 
 function spawnCoin() {
@@ -192,7 +193,8 @@ function updateTapBar() {
     }
     tapTimer--;
     remainingTaps.innerText = taps;
-    tapFill.style.width = `${(taps / 1000) * 100}%`;
+    const fillPercentage = taps / 1000;
+    tapFill.style.transform = `scaleX(${fillPercentage})`; // Уменьшаем заполнение с правой стороны
 }
 
 function gameLoop() {
@@ -238,6 +240,7 @@ function handleTap(event) {
         document.getElementById('remaining-taps').innerText = taps;
         const tapBar = document.getElementById('tap-bar');
         tapBar.style.width = `${(taps / 1000) * 100}%`;
+        updateTapFill();
     }
     if (progress > 100) progress = 100; // Не позволяем прогрессу превышать 100%
     updateProgress(); // Обновляем прогресс-бар и иконку игрока

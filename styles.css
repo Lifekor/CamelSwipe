@@ -1,3 +1,163 @@
-.title {
-    color: green;
+@font-face {
+    font-family: 'LilitaOne-Regular';
+    src: url('Font/LilitaOne-Regular.ttf') format('truetype');
+}
+body {
+    margin: 0;
+    overflow: hidden;
+    touch-action: none; /* Отключаем все виды взаимодействий касаниями */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #000;
+    font-family: 'LilitaOne-Regular';
+    position: relative;
+}
+#gameCanvas {
+    display: block;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Чтобы клики проходили сквозь canvas */
+}
+
+#ui {
+    position: absolute;
+    top: 2vh;
+    left: 85%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3vh;
+    color: white;
+    text-align: center;
+    z-index: 2; /* Убедитесь, что UI отображается поверх всего остального */
+}
+.coin-container {
+    position: relative;
+    width: 10vh;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.coin-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-image: url('textures/coin.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+#coin-count-text {
+    position: absolute;
+    top: 25%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    font-size: 1.7vh;
+    color: white;
+    z-index: 1; /* Убедитесь, что текст отображается поверх иконки */
+}
+.progress-container {
+    position: absolute;
+    left: 5vw;
+    top: 44vh;
+    transform: translateY(-50%);
+    width: 60px; /* Фиксированная ширина */
+    height: 500px; /* Фиксированная высота */
+    z-index: 2;
+}
+
+.progress-bar {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: url('textures/progress-bar.png');
+    background-size: cover;
+    z-index: 1; /* Добавьте z-index для приоритета отображения */
+}
+
+.player-icon {
+    position: absolute;
+    bottom: 0;
+    left: 39%;
+    transform: translateX(-50%);
+    width: 40px; /* Фиксированная ширина */
+    height: 40px; /* Фиксированная высота */
+    background-image: url('textures/player-icon.png');
+    background-size: cover;
+}
+
+.progress-background {
+    position: absolute;
+    width: 93%; /* Фиксированная ширина */
+    height: 6%; /* Фиксированная высота */
+    background-color: rgba(246, 176, 62, 1);
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 94%);
+    border-radius: 21px;
+    border: 2px solid black; /* Добавляем обводку */
+    z-index: 0; /* Убедитесь, что фоновый прямоугольник под процентами */
+}
+
+#progress-text {
+    position: absolute;
+    bottom: 0;
+    left: 55%;
+    transform: translate(-50%, 120%); /* Объединяем translateX и translateY */
+    color: white;
+    font-family: 'LilitaOne-Regular';
+    font-size: 2vh;
+}
+
+
+.tap-bar-container {
+    position: absolute;
+    bottom: 11vh; /* Располагаем ближе к нижней части экрана */
+    left: 50%;
+    width: 90%; /* Сделаем ширину контейнера более адаптивной */
+    max-width: 236px; /* Ограничим максимальную ширину */
+    height: 18px; /* Высота контейнера */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(-50%);
+    z-index: 2;
+    border-radius: 10px; /* Скругленные углы контейнера */
+    background-color: rgba(0, 102, 255, 0.1); /* Установим фон для контейнера */
+}
+.tap-fill {
+    height: 100%;
+    background-color: rgba(0, 102, 255, 1);
+    border-radius: 10px;
+    z-index: 0;
+    width: 100%;
+    transform-origin: left; /* Устанавливаем точку начала трансформации слева */
+}
+.tap-bar {
+    position: absolute;
+    width: 102%;
+    height: 100%;
+    background-image: url('textures/tap-bar.png');
+    background-size: cover;
+    z-index: 1;
+}
+.tap-count-container {
+    position: absolute;
+    bottom: 13vh; /* Располагаем текст над tap-bar */
+    left: 31%; /* Центрируем контейнер по горизонтали */
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    font-size: 2vh;
+    color: white;
+    z-index: 3; /* Убедитесь, что текст отображается поверх всего остального */
+}
+.tap-count-container img {
+    margin-left: 1vh;
+    width: 1vh;
+    height: 2vh;
 }

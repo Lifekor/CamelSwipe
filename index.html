@@ -4,162 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Camel Runner</title>
-    <style>
-        @font-face {
-            font-family: 'LilitaOne-Regular';
-            src: url('Font/LilitaOne-Regular.ttf') format('truetype');
-        }
-        body {
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: #000;
-            font-family: 'LilitaOne-Regular';
-            position: relative;
-        }
-        #gameCanvas {
-            display: block;
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none; /* Чтобы клики проходили сквозь canvas */
-        }
-
-        #ui {
-            position: absolute;
-            top: 2vh;
-            left: 85%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3vh;
-            color: white;
-            text-align: center;
-            z-index: 2; /* Убедитесь, что UI отображается поверх всего остального */
-        }
-        .coin-container {
-            position: relative;
-            width: 10vh;
-            height: 10vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .coin-icon {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background-image: url('textures/coin.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-        #coin-count-text {
-            position: absolute;
-            top: 25%;
-            left: 75%;
-            transform: translate(-50%, -50%);
-            font-size: 1.7vh;
-            color: white;
-            z-index: 1; /* Убедитесь, что текст отображается поверх иконки */
-        }
-        .progress-container {
-            position: absolute;
-            left: 5vw;
-            top: 44vh;
-            transform: translateY(-50%);
-            width: 11vw;
-            height: 50vh;
-            z-index: 2;
-        }
-        .progress-bar {
-            position: relative;
-            width: 100%;
-            height: 105%;
-            background-image: url('textures/progress-bar.png');
-            background-size: cover;
-            z-index: 1; /* Добавьте z-index для приоритета отображения */
-        }
-        .player-icon {
-            position: absolute;
-            bottom: 0;
-            left: 37%;
-            transform: translateX(-50%);
-            width: 10vw;
-            height: 10vw;
-            background-image: url('textures/player-icon.png');
-            background-size: cover;
-        }
-        .progress-background {
-            position: absolute;
-            width: 110%; /* Увеличиваем ширину фона */
-            height: 5%;
-            background-color: rgba(246, 176, 62, 1);
-            bottom: 0;
-            left: 45%; /* Смещаем немного правее */
-            transform: translate(-50%, 100%);
-            border-radius: 21px;
-            border: 2px solid black; /* Добавляем обводку */
-            z-index: 0; /* Убедитесь, что фоновый прямоугольник под процентами */
-        }
-        #progress-text {
-            position: absolute;
-            bottom: 0;
-            transform: translateY(120%); /* Смещаем текст ниже */
-            color: white;
-            left: 2vw;
-            font-family: 'LilitaOne-Regular';
-            font-size: 2vh;
-        }
-        .tap-bar-container {
-            position: absolute;
-            bottom: 5vh; /* Располагаем ближе к нижней части экрана */
-            left: 50%;
-            width: 432px; /* Ширина контейнера */
-            height: 24px; /* Высота контейнера */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: translateX(-50%);
-            z-index: 2;
-            border-radius: 10px; /* Скругленные углы контейнера */
-        }
-        .tap-fill {
-            position: absolute;
-            height: 100%;
-            background-color: blue;
-            border-radius: 21px;
-            z-index: 0;
-            right: 0; /* Устанавливаем fill на правый край */
-        }
-        .tap-bar {
-            position: absolute;
-            width: 102%;
-            height: 100%;
-            background-image: url('textures/tap-bar.png');
-            background-size: cover;
-            z-index: 1;
-        }
-        .tap-count-container {
-            position: absolute;
-            bottom: 8vh; /* Располагаем текст над tap-bar */
-            left: 25%; /* Центрируем контейнер по горизонтали */
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            font-size: 3vh;
-            color: white;
-            z-index: 3; /* Убедитесь, что текст отображается поверх всего остального */
-        }
-        .tap-count-container img {
-            margin-left: 1vh;
-            width: 2vh;
-            height: 3vh;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="ui">
@@ -170,17 +15,17 @@
     </div>
     <div class="progress-container">
         <div class="progress-bar">
-            <div class="progress-background"></div> <!-- Перемещено выше -->
+            <div class="progress-background"></div>
             <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
             <div id="progress-text">0%</div>
         </div>
     </div>
     <div class="tap-count-container">
         <span id="remaining-taps">975</span>/<span id="total-taps">1000</span>
-        <img src="textures/water.png" alt="Water Icon"> <!-- Используем вашу картинку water.png -->
+        <img src="textures/water.png" alt="Water Icon">
     </div>
     <div class="tap-bar-container">
-        <div class="tap-fill" id="tap-fill"></div> <!-- Заполнение синего цвета -->
+        <div class="tap-fill" id="tap-fill"></div>
         <div class="tap-bar"></div>
     </div>
     <canvas id="gameCanvas"></canvas>
