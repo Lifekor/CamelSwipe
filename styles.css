@@ -65,8 +65,8 @@ body {
     left: 5vw;
     top: 44vh;
     transform: translateY(-50%);
-    width: 11vw;
-    height: 50vh;
+    width: 60px; /* Фиксированная ширина */
+    height: 500px; /* Фиксированная высота */
     z-index: 2;
 }
 
@@ -134,7 +134,7 @@ body {
     background-color: rgba(0, 102, 255, 1);
     border-radius: 10px;
     z-index: 0;
-    width: 98%;
+    width: 100%;
     transform-origin: left; /* Устанавливаем точку начала трансформации слева */
 }
 .tap-bar {

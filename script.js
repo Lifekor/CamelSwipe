@@ -63,10 +63,9 @@ for (let i = 1; i <= 14; i++) {
 }
 
 let frameIndex = 0;
-let frameCount = 0;
 const coinSize = 100;
-const camelWidth = 1080 / 3;
-const camelHeight = 1920 / 3;
+const camelWidth = 1080 / 2;
+const camelHeight = 1920 / 2;
 
 let lanes = [
     canvas.width * 0.5,  // Первая линия (30% от ширины экрана)
@@ -97,15 +96,10 @@ function drawTrack() {
 }
 
 function drawCamel() {
-    frameCount++;
-    if (frameCount % 2 === 0) {
-        frameIndex++;
-        if (frameIndex >= camelFrames.length) frameIndex = 0;
-    }
     const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 3, canvas.height - scaledCamelHeight - 5, scaledCamelWidth, scaledCamelHeight);
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 5, scaledCamelWidth, scaledCamelHeight);
 }
 
 function spawnCoin() {
@@ -215,6 +209,11 @@ function handleTap(event) {
     const tapY = event.clientY;
     let tapTextContent = 'x1'; // По умолчанию х1
     let tapOnCoin = false;
+    
+    // Обновляем кадр верблюда при каждом тапе
+    frameIndex++;
+    if (frameIndex >= camelFrames.length) frameIndex = 0;
+
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
         const coinSizeScaled = coinSize * coin.scale; // Учитываем масштаб монеты
