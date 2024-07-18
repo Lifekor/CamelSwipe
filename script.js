@@ -64,8 +64,8 @@ for (let i = 1; i <= 14; i++) {
 
 let frameIndex = 0;
 const coinSize = 100;
-const camelWidth = 1080 / 2;
-const camelHeight = 1920 / 2;
+const camelWidth = 1080 / 1.8;
+const camelHeight = 1920 / 1.8;
 
 let lanes = [
     canvas.width * 0.5,  // Первая линия (30% от ширины экрана) .
@@ -99,8 +99,9 @@ function drawCamel() {
     const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 5, scaledCamelWidth, scaledCamelHeight);
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 45, scaledCamelWidth, scaledCamelHeight);
 }
+
 
 function spawnCoin() {
     if (coinSpawnTimer <= 0) {
