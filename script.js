@@ -80,8 +80,13 @@ let coinSpawnTimer = 0;
 const coins = [];
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * ratio;
+    canvas.height = window.innerHeight * ratio;
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
+    ctx.scale(ratio, ratio);
+
     lanes = [
         canvas.width * 0.40,
         canvas.width * 0.45,
@@ -90,6 +95,7 @@ function resizeCanvas() {
         canvas.width * 0.60
     ];
 }
+
 window.addEventListener('resize', resizeCanvas);
 
 function drawTrack() {
