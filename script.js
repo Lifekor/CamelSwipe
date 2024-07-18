@@ -37,7 +37,10 @@ let tapTimer = 0;
 let coinCount = 0;
 let taps = 1000;
 let progress = 0;
-let speed = 2;
+let speed = 2; // Установили скорость 2
+let isTapping = false;
+let stopAnimationTimeout = null;
+let frameCounter = 0; // Счетчик кадров для замедления анимации верблюда
 
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
@@ -96,12 +99,18 @@ function drawTrack() {
 }
 
 function drawCamel() {
+    if (isTapping) {
+        frameCounter++;
+        if (frameCounter % 2 === 0) { // Обновляем кадр каждые 4 кадра
+            frameIndex++;
+            if (frameIndex >= camelFrames.length) frameIndex = 0;
+        }
+    }
     const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 45, scaledCamelWidth, scaledCamelHeight);
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 5, scaledCamelWidth, scaledCamelHeight);
 }
-
 
 function spawnCoin() {
     if (coinSpawnTimer <= 0) {
@@ -116,7 +125,6 @@ function spawnCoin() {
     }
     coinSpawnTimer--;
 }
-
 
 function drawCoins() {
     for (let i = 0; i < coins.length; i++) {
@@ -206,14 +214,15 @@ function gameLoop() {
 }
 
 function handleTap(event) {
+    isTapping = true;
+    clearTimeout(stopAnimationTimeout); // Очищаем предыдущий таймаут
     const tapX = event.clientX;
     const tapY = event.clientY;
     let tapTextContent = 'x1'; // По умолчанию х1
     let tapOnCoin = false;
-    
+
     // Обновляем кадр верблюда при каждом тапе
-    frameIndex++;
-    if (frameIndex >= camelFrames.length) frameIndex = 0;
+    frameCounter = 0; // Сбрасываем счетчик кадров при каждом новом тапе
 
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
@@ -248,6 +257,8 @@ function handleTap(event) {
 }
 
 function handleTouch(event) {
+    isTapping = true;
+    clearTimeout(stopAnimationTimeout); // Очищаем предыдущий таймаут
     event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
     for (let i = 0; i < event.touches.length; i++) {
         const touch = event.touches[i];
@@ -255,8 +266,17 @@ function handleTouch(event) {
     }
 }
 
+function handleTapEnd() {
+    isTapping = false;
+    stopAnimationTimeout = setTimeout(() => {
+        frameIndex = 0; // Останавливаем анимацию через 1 секунду
+    }, 1000);
+}
+
 window.addEventListener('click', handleTap);
 window.addEventListener('touchstart', handleTouch);
+window.addEventListener('mouseup', handleTapEnd);
+window.addEventListener('touchend', handleTapEnd);
 
 trackImg.onload = () => {
     resizeCanvas();
