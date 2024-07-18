@@ -88,26 +88,28 @@ function resizeCanvas() {
     ctx.scale(ratio, ratio);
 
     lanes = [
-        canvas.width * 0.40,
-        canvas.width * 0.45,
-        canvas.width * 0.50,
-        canvas.width * 0.55,
-        canvas.width * 0.60
+        canvas.width * 0.40 / ratio,
+        canvas.width * 0.45 / ratio,
+        canvas.width * 0.50 / ratio,
+        canvas.width * 0.55 / ratio,
+        canvas.width * 0.60 / ratio
     ];
 }
 
 window.addEventListener('resize', resizeCanvas);
 
 function drawTrack() {
-    ctx.drawImage(trackImg, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(trackImg, 0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
 }
+
 
 function drawCamel() {
     const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 100, scaledCamelWidth, scaledCamelHeight);
+    ctx.drawImage(camelFrames[frameIndex], (lanes[currentLane] - scaledCamelWidth / 2.5) / window.devicePixelRatio, (canvas.height - scaledCamelHeight - 100) / window.devicePixelRatio, scaledCamelWidth / window.devicePixelRatio, scaledCamelHeight / window.devicePixelRatio);
 }
+
 
 function spawnCoin() {
     if (coinSpawnTimer <= 0) {
@@ -136,7 +138,7 @@ function drawCoins() {
 
         const coinSizeScaled = coinSize * coin.scale;
         coin.x = x; // Сохраняем текущую позицию по X для обработки кликов
-        ctx.drawImage(coinFrames[coin.frameIndex], x - coinSizeScaled / 2, coin.y - coinSizeScaled / 2, coinSizeScaled, coinSizeScaled);
+        ctx.drawImage(coinFrames[coin.frameIndex], (x - coinSizeScaled / 2) / window.devicePixelRatio, (coin.y - coinSizeScaled / 2) / window.devicePixelRatio, coinSizeScaled / window.devicePixelRatio, coinSizeScaled / window.devicePixelRatio);
         coin.frameIndex++;
         if (coin.frameIndex >= coinFrames.length) coin.frameIndex = 0;
         if (coin.y > canvas.height) {
@@ -145,6 +147,7 @@ function drawCoins() {
         }
     }
 }
+
 
 function drawTapText() {
     ctx.font = "3vh 'LilitaOne-Regular'"; // Увеличиваем размер текста
