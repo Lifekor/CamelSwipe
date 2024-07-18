@@ -3,6 +3,7 @@ from bson import ObjectId
 from config.collections import Collections
 from config.database import db
 from exceptions.custom_exception import CustomException
+from models.boosts.boost_status import BoostType
 
 
 class BoostService:
@@ -21,14 +22,14 @@ class BoostService:
         boosts = await self.user_boost_collection.find({'user_id': ObjectId(user_id)}).to_list(length=None)
         return boosts
 
-    async def buy_boost_async(self, user_id: str, user_boost_id: str):
-        await self._get_user_async(user_id=user_id)
-        user_boost = await self.user_boost_collection.find_one({'_id': ObjectId(user_boost_id)})
-        if not user_boost:
+    async def buy_boost_async(self, user_id: str, boost_id: str):
+        user = await self._get_user_async(user_id=user_id)
+        boost = await self.boost_collection.find_one({'_id': ObjectId(boost_id)})
+        if not boost:
             raise CustomException('Boost not found')
 
-        boost = await self.boost_collection.find_one({'_id': ObjectId(user_boost['boost_id'])})
-        if not boost:
+        user_boost = await self.user_boost_collection.find_one({'_id': ObjectId(boost['_id'])})
+        if not user_boost:
             raise CustomException('Boost not found')
 
         user_coin = await self.coin_collection(user_id=user_boost['user_id'])
@@ -41,7 +42,19 @@ class BoostService:
             raise CustomException("Already got max boost lvl")
 
         user_coin['coin'] -= user_boost['next_price']
-        user_coin['coin_per_hour'] += boost['prices'].index(user_coin['next_price'])
+        boost_type = BoostType(boost['boost_type'])
+        await self._set_reward_async(user=user, boost_type=boost_type)
+
+    async def _set_reward_async(self, user, boost_type: BoostType, reward):
+        user_point = await self.coin_collection.find_one({'user_id': user['_id']})
+        if boost_type == BoostType.Speed:
+            user_point['speed'] += reward
+        elif boost_type == BoostType.PointBonus:
+            user_point['stamina'] += reward
+        elif boost_type == BoostType.Regeneration:
+            user_point['regeneration'] += reward
+        elif boost_type == BoostType.PointBonus:
+            user_point['points_bonus'] += reward
 
     async def _get_user_async(self, user_id: str):
         user = await self.user_collection.find_one({'_id': ObjectId(user_id)})
