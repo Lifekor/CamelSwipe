@@ -38,6 +38,7 @@ let coinCount = 0;
 let taps = 1000;
 let progress = 0;
 let speed = 2;
+let frameCounter = 0;
 
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
@@ -99,7 +100,7 @@ function drawCamel() {
     const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 95, scaledCamelWidth, scaledCamelHeight);
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 100, scaledCamelWidth, scaledCamelHeight);
 }
 
 function spawnCoin() {
@@ -200,8 +201,17 @@ function gameLoop() {
     drawTapText();
     updateProgress();
     updateTapBar();
+    
+    // Обновляем кадр анимации верблюда постоянно
+    frameCounter++;
+    if (frameCounter % 2 === 0) { // Обновляем кадр каждые 4 цикла
+        frameIndex++;
+        if (frameIndex >= camelFrames.length) frameIndex = 0;
+    }
+
     requestAnimationFrame(gameLoop);
 }
+
 
 function handleTap(event) {
     const tapX = event.clientX;
@@ -209,14 +219,10 @@ function handleTap(event) {
     let tapTextContent = 'x1'; // По умолчанию х1
     let tapOnCoin = false;
 
-    // Вибрация устройства
+    // Вибрация устройства с более явным заданием паттернов
     if (navigator.vibrate) {
-        navigator.vibrate(50); // Вибрация на 50 миллисекунд
+        navigator.vibrate([50]); // Вибрация на 50 миллисекунд
     }
-
-    // Обновляем кадр верблюда при каждом тапе
-    frameIndex++;
-    if (frameIndex >= camelFrames.length) frameIndex = 0;
 
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
