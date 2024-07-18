@@ -40,6 +40,8 @@ let progress = 0;
 let speed = 2;
 let frameCounter = 0;
 
+const frameDelay = 2;
+
 const trackImg = new Image();
 trackImg.src = 'textures/track.png';
 
@@ -69,58 +71,59 @@ const camelWidth = 1080 / 1.8;
 const camelHeight = 1920 / 1.8;
 
 let lanes = [
-    canvas.width * 0.5,  // Первая линия (30% от ширины экрана).
-    canvas.width * 0.5,  // Вторая линия (40% от ширины экрана)
-    canvas.width * 0.5,  // Третья линия (50% от ширины экрана)
-    canvas.width * 0.5,  // Четвертая линия (60% от ширины экрана)
-    canvas.width * 0.5   // Пятая линия (70% от ширины экрана)
+    canvas.width * 0.40,
+    canvas.width * 0.45,
+    canvas.width * 0.50,
+    canvas.width * 0.55,
+    canvas.width * 0.60
 ];
 let currentLane = 1;
 let coinSpawnTimer = 0;
 const coins = [];
 
 function resizeCanvas() {
-    const ratio = window.devicePixelRatio || 1;
-    canvas.width = window.innerWidth * ratio;
-    canvas.height = window.innerHeight * ratio;
-    canvas.style.width = `${window.innerWidth}px`;
-    canvas.style.height = `${window.innerHeight}px`;
-    ctx.scale(ratio, ratio);
-
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     lanes = [
-        canvas.width * 0.40 / ratio,
-        canvas.width * 0.45 / ratio,
-        canvas.width * 0.50 / ratio,
-        canvas.width * 0.55 / ratio,
-        canvas.width * 0.60 / ratio
+        canvas.width * 0.40,
+        canvas.width * 0.45,
+        canvas.width * 0.50,
+        canvas.width * 0.55,
+        canvas.width * 0.60
     ];
 }
-
 window.addEventListener('resize', resizeCanvas);
 
 function drawTrack() {
-    ctx.drawImage(trackImg, 0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
+    ctx.drawImage(trackImg, 0, 0, canvas.width, canvas.height);
 }
-
 
 function drawCamel() {
-    const camelScale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920); // Устанавливаем масштаб верблюда
+    const camelScale = Math.min(canvas.width / 1080, canvas.height / 1920);
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    ctx.drawImage(camelFrames[frameIndex], (lanes[currentLane] - scaledCamelWidth / 2.5) / window.devicePixelRatio, (canvas.height - scaledCamelHeight - 100) / window.devicePixelRatio, scaledCamelWidth / window.devicePixelRatio, scaledCamelHeight / window.devicePixelRatio);
+    
+    if (frameCounter % frameDelay === 0) {
+        frameIndex++;
+        if (frameIndex >= camelFrames.length) frameIndex = 0;
+    }
+    
+    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 100, scaledCamelWidth, scaledCamelHeight);
+    frameCounter++;
 }
+
 
 
 function spawnCoin() {
     if (coinSpawnTimer <= 0) {
-        const numCoins = Math.floor(Math.random() * 3) + 1; // Спавним от 1 до 3 монеток
+        const numCoins = Math.floor(Math.random() * 3) + 1;
         for (let i = 0; i < numCoins; i++) {
-            const startX = canvas.width / 2; // Начальная позиция по X - центр экрана
-            const startY = canvas.height / 1.6; // Начальная позиция по Y - центр экрана
+            const startX = canvas.width / 2;
+            const startY = canvas.height / 1.6;
             const laneIndex = Math.floor(Math.random() * lanes.length);
             coins.push({ startX: startX, startY: startY, endX: lanes[laneIndex], laneIndex: laneIndex, y: startY, frameIndex: 0, scale: 0.2 });
         }
-        coinSpawnTimer = 60; // Спавн монеток каждые 50 кадров
+        coinSpawnTimer = 60;
     }
     coinSpawnTimer--;
 }
@@ -129,16 +132,15 @@ function drawCoins() {
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
         coin.y += speed;
-        coin.scale = Math.min(1, coin.scale + 0.01); // Увеличиваем размер монетки
+        coin.scale = Math.min(1, coin.scale + 0.01);
 
-        // Интерполяция координаты X и Y в зависимости от текущей позиции Y
         const t = (coin.y - coin.startY) / (canvas.height - coin.startY);
         const endX = lanes[coin.laneIndex];
-        const x = coin.startX + t * (endX - coin.startX) * (4 + t); // Еще сильнее увеличиваем расстояние между монетами ближе к низу экрана
+        const x = coin.startX + t * (endX - coin.startX) * (4 + t);
 
         const coinSizeScaled = coinSize * coin.scale;
-        coin.x = x; // Сохраняем текущую позицию по X для обработки кликов
-        ctx.drawImage(coinFrames[coin.frameIndex], (x - coinSizeScaled / 2) / window.devicePixelRatio, (coin.y - coinSizeScaled / 2) / window.devicePixelRatio, coinSizeScaled / window.devicePixelRatio, coinSizeScaled / window.devicePixelRatio);
+        coin.x = x;
+        ctx.drawImage(coinFrames[coin.frameIndex], x - coinSizeScaled / 2, coin.y - coinSizeScaled / 2, coinSizeScaled, coinSizeScaled);
         coin.frameIndex++;
         if (coin.frameIndex >= coinFrames.length) coin.frameIndex = 0;
         if (coin.y > canvas.height) {
@@ -148,14 +150,13 @@ function drawCoins() {
     }
 }
 
-
 function drawTapText() {
-    ctx.font = "3vh 'LilitaOne-Regular'"; // Увеличиваем размер текста
-    ctx.fillStyle = "white"; // Устанавливаем цвет текста
+    ctx.font = "3vh 'LilitaOne-Regular'";
+    ctx.fillStyle = "white";
     for (let i = 0; i < tapText.length; i++) {
         const tap = tapText[i];
         ctx.globalAlpha = tap.opacity;
-        ctx.fillText(tap.text, tap.x, tap.y); // Рисуем текст вместо изображения
+        ctx.fillText(tap.text, tap.x, tap.y);
         ctx.globalAlpha = 1;
         tap.y -= 2;
         tap.opacity -= 0.02;
@@ -198,7 +199,7 @@ function updateTapBar() {
     tapTimer--;
     remainingTaps.innerText = taps;
     const fillPercentage = taps / 1000;
-    tapFill.style.transform = `scaleX(${fillPercentage})`; // Уменьшаем заполнение с правой стороны
+    tapFill.style.transform = `scaleX(${fillPercentage})`;
 }
 
 function gameLoop() {
@@ -210,14 +211,6 @@ function gameLoop() {
     drawTapText();
     updateProgress();
     updateTapBar();
-    
-    // Обновляем кадр анимации верблюда постоянно
-    frameCounter++;
-    if (frameCounter % 2 === 0) { // Обновляем кадр каждые 4 цикла
-        frameIndex++;
-        if (frameIndex >= camelFrames.length) frameIndex = 0;
-    }
-
     requestAnimationFrame(gameLoop);
 }
 
@@ -225,33 +218,28 @@ function gameLoop() {
 function handleTap(event) {
     const tapX = event.clientX;
     const tapY = event.clientY;
-    let tapTextContent = 'x1'; // По умолчанию х1
+    let tapTextContent = 'x1';
     let tapOnCoin = false;
-
-    // Проверка поддержки вибрации
-    if ('vibrate' in navigator) {
-        navigator.vibrate(50); // Вибрация на 50 миллисекунд
-    }
 
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
-        const coinSizeScaled = coinSize * coin.scale; // Учитываем масштаб монеты
+        const coinSizeScaled = coinSize * coin.scale;
         const coinX = coin.x - coinSizeScaled / 2;
         const coinY = coin.y - coinSizeScaled / 2;
         if (tapX > coinX && tapX < coinX + coinSizeScaled && tapY > coinY && tapY < coinY + coinSizeScaled) {
-            tapTextContent = 'x2'; // Если попали по монетке
+            tapTextContent = 'x2';
             coins.splice(i, 1);
             coinCount += 2;
             document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
             tapOnCoin = true;
-            progress += 0.08; // Увеличиваем прогресс на 0.08% за клик по монетке
+            progress += 0.08;
             break;
         }
     }
     if (!tapOnCoin) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
-        progress += 0.08; // Увеличиваем прогресс на 0.08% за обычный клик
+        progress += 0.08;
     }
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
     if (taps > 0) {
@@ -261,13 +249,13 @@ function handleTap(event) {
         tapBar.style.width = `${(taps / 1000) * 100}%`;
         updateTapFill();
     }
-    if (progress > 100) progress = 100; // Не позволяем прогрессу превышать 100%
-    updateProgress(); // Обновляем прогресс-бар и иконку игрока
+    if (progress > 100) progress = 100;
+    updateProgress();
 }
 
 
 function handleTouch(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
+    event.preventDefault();
     for (let i = 0; i < event.touches.length; i++) {
         const touch = event.touches[i];
         handleTap({ clientX: touch.clientX, clientY: touch.clientY });
