@@ -214,6 +214,11 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+function triggerVibration() {
+    if (navigator.vibrate) {
+        navigator.vibrate(100); // Вибрация 100 мс
+    }
+}
 
 function handleTap(event) {
     const tapX = event.clientX;
@@ -221,10 +226,7 @@ function handleTap(event) {
     let tapTextContent = 'x1';
     let tapOnCoin = false;
 
-    // Проверка поддержки вибрации
-    if ('vibrate' in navigator) {
-        navigator.vibrate(50); // Вибрация 100 мс
-    }
+    triggerVibration();
 
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
@@ -260,16 +262,12 @@ function handleTap(event) {
 
 function handleTouch(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
-    // Проверка поддержки вибрации
-    if ('vibrate' in navigator) {
-        navigator.vibrate(100); // Вибрация 100 мс
-    }
+    triggerVibration();
     for (let i = 0; i < event.touches.length; i++) {
         const touch = event.touches[i];
         handleTap({ clientX: touch.clientX, clientY: touch.clientY });
     }
 }
-
 
 window.addEventListener('click', handleTap);
 window.addEventListener('touchstart', handleTouch);
