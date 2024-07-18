@@ -223,7 +223,7 @@ function handleTap(event) {
 
     // Проверка поддержки вибрации
     if ('vibrate' in navigator) {
-        navigator.vibrate(100); // Вибрация 100 мс
+        navigator.vibrate(50); // Вибрация 100 мс
     }
 
     for (let i = 0; i < coins.length; i++) {
