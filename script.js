@@ -216,7 +216,7 @@ function gameLoop() {
 
 function triggerVibration() {
     if (navigator.vibrate) {
-        navigator.vibrate(100); // Вибрация 100 мс
+        navigator.vibrate(20); // Вибрация 100 мс
     }
 }
 
