@@ -219,9 +219,9 @@ function handleTap(event) {
     let tapTextContent = 'x1'; // По умолчанию х1
     let tapOnCoin = false;
 
-    // Вибрация устройства с более явным заданием паттернов
-    if (navigator.vibrate) {
-        navigator.vibrate([50]); // Вибрация на 50 миллисекунд
+    // Проверка поддержки вибрации
+    if ('vibrate' in navigator) {
+        navigator.vibrate(50); // Вибрация на 50 миллисекунд
     }
 
     for (let i = 0; i < coins.length; i++) {
@@ -255,6 +255,7 @@ function handleTap(event) {
     if (progress > 100) progress = 100; // Не позволяем прогрессу превышать 100%
     updateProgress(); // Обновляем прогресс-бар и иконку игрока
 }
+
 
 function handleTouch(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
