@@ -23,8 +23,15 @@ class BoostService:
 
     async def get_async(self, user_id: str):
         boosts = await self.user_boost_collection.find({'user_id': ObjectId(user_id)}).to_list(length=None)
+        dtos = []
 
-        return [BoostDto(boost_id=str(boost['boost_id']), lvl=boost['lvl']) for boost in boosts]
+        for user_boost in boosts:
+            boost = await self.boost_collection.find_one({'_id': ObjectId(user_boost['boost_id'])})
+            boost_type = BoostType(boost['boost_type'])
+            boost = BoostDto(boost_id=str(boost['_id']), lvl=user_boost['lvl'], description=boost['description'], type=boost_type.name)
+            dtos.append(boost)
+
+        return dtos
 
     async def buy_boost_async(self, user_id: str, boost_id: str):
         user = await self._get_user_async(user_id=user_id)
