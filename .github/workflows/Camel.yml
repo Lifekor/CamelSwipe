@@ -34,4 +34,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: client/web/build
+          # Upload entire repository
+          path: '.'
