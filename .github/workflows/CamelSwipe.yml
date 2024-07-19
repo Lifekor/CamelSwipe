@@ -2,8 +2,8 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ["main"]  # Workflow запускается при пушах в ветку mainApp
-  workflow_dispatch:  # Позволяет запускать workflow вручную
+    branches: ["main"] 
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -30,11 +30,6 @@ jobs:
       - name: Set up Docker Compose
         run: |
           docker-compose -f production/docker-compose.yml up -d --build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
