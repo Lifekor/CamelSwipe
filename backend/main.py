@@ -6,7 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from config.database import init_db_async
 from config.logger import LoggerSetup
 from middleware.exception_middleware import ExceptionMiddleware
-from routes import auth_route, mission_route, friends_route, boost_route
+from routes import auth_route, mission_route, friends_route, boost_route, game_route
 
 app = FastAPI()
 app.add_middleware(ExceptionMiddleware)
@@ -31,3 +31,4 @@ app.include_router(auth_route.router, prefix="/auth", tags=["auth"])
 app.include_router(boost_route.router, prefix="/boost", tags=["boost"])
 app.include_router(mission_route.router, prefix="/mission", tags=["mission"])
 app.include_router(friends_route.router, prefix="/friend", tags=["friend"])
+app.include_router(game_route.router, prefix="/game", tags=["game"])

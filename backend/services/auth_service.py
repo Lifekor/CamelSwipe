@@ -44,6 +44,8 @@ class AuthService:
                                                                 stamina=0,
                                                                 regeneration=0,
                                                                 points_bonus=0,
+                                                                current_water = 0,
+                                                                current_path = 0,
                                                                 last_visit=datetime.datetime.utcnow())))
         boosts = await self.boost_collection.find().to_list(length=None)
         for boost in boosts:

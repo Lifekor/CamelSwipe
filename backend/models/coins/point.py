@@ -12,5 +12,10 @@ class Point(BaseEntity):
     speed: float
     stamina: float
     regeneration: float
+
     points_bonus: float
+
+    current_water: float
+
+    current_path: int
     last_visit: datetime
