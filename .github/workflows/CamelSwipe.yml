@@ -2,24 +2,19 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ["main"]
-
-  # Позволяет запустить workflow вручную из вкладки Actions
+    branches: ["mainApp"]  # Указываем ветку, для которой срабатывает workflow
   workflow_dispatch:
 
-# Устанавливает права для GITHUB_TOKEN, чтобы разрешить развертывание на GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Разрешить только одно параллельное развертывание
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Единственная работа для развертывания
   deploy:
     environment:
       name: github-pages
@@ -29,18 +24,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      - name: Checkout mainApp branch
+        run: git checkout mainApp  # Переключаемся на ветку mainApp
+
+      - name: Set up Docker
+        uses: production/setup-buildx-action@v2
 
       - name: Set up Docker Compose
         run: |
-          docker-compose up -d --build
+          docker-compose -f production/docker-compose.yml up -d --build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Загрузить весь репозиторий
-          path: '.'
+          path: './build'
 
       - name: Deploy to GitHub Pages
         id: deployment
