@@ -3,7 +3,7 @@ import TaskTable from '../components/ui/taskpage/taskTable'
 const TasksPage = () => {
 	return (
 		<>
-		<p className='text-white font-bold pb-2 pt-2 border-b-[2px] text-xl font-Montserrat'>Tasks</p>
+		<p className='text-white font-bold pb-2 pt-2 border-b-[1px] text-xl font-Montserrat border-black'>Tasks</p>
 
 		<div className='flex justify-center font-Montserrat'>
 			<div className='max-w-[350px] w-full text-white'>

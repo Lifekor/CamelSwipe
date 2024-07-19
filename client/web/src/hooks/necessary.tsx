@@ -40,7 +40,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   const getId = async (): Promise<void> => {
     const res = await api<idInterface>({
       method: 'POST',
-      url: `/auth/sign-in?user_id=${userId}&username=${user !== null ? user : name}`
+      url: `/auth/sign-in?user_id=${100}&username=${user !== null ? user : '100'}`
     })
     if (res) {
       updateRole(res?.role)

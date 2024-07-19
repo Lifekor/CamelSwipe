@@ -34,8 +34,8 @@ const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({ error, onClose }) => {
       onClose={handleClose}
       sx={{
         '& .MuiPaper-root': {
-          backgroundColor: 'black',
-          border: '2px solid red',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          border: '2px solid #E3AC52',
           borderRadius: '0 20px 20px 0',
           marginTop: '10px',
           width: '100%'

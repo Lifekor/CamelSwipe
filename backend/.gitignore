@@ -125,13 +125,6 @@ env.bak
 # FastAPI specific
 *test.db
 
-# Docker
-docker-compose*.yml
-Dockerfile
-Dockerfile.*
-.dockerignore
-docker-compose.override.yml
-
 # Server specific
 logs/
 *.log

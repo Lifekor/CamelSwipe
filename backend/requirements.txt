@@ -1,0 +1,5 @@
+motor
+fastapi
+uvicorn
+requests
+solathon

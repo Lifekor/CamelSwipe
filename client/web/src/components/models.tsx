@@ -79,5 +79,10 @@ export interface friends {
 	data: friendsData[]
 }
 
+export interface boost {
+	boost_id: string,
+  lvl: number
+}
+
 
 
