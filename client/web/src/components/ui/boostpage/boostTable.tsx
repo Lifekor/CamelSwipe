@@ -9,21 +9,26 @@ import { ReactComponent as Star } from '../../images/boostpage/star.svg'
 import waterCamel from '../../images/boostpage/waterCamel.png'
 import { boost } from '../../models'
 
-const camelImages = [speedCamel, waterCamel, regeneration, pointsbonus]
-const camelNames = ['Speed', 'Stamina', 'Regeneration', 'Points Bonus']
-const camelDescr = ['For each upgrade, +5% to speed', 'Increase your water supply', 'Speeds up water reserve recovery', 'Continue mining points when you are not in the game']
-
 interface StarsProps {
 	level: number
 }
 
 const Stars: React.FC<StarsProps> = ({ level }) => (
 	<>
-			{[...Array(10)].map((_, i) => (
-					<Star key={i} className={`w-[16px] ${i < level ? 'text-myColor-700' : 'text-white'}`} />
-			))}
+        {[...Array(10)].map((_, i) => (
+                <Star key={i} className={`w-[16px] ${i < level ? 'text-myColor-700' : 'text-white'}`} />
+        ))}
 	</>
 )
+
+    const GetIcon = (icon: string) => {
+        switch (icon) {
+            case 'Speed': return <img src={speedCamel} alt="" className='w-[70px] h-[70px] z-10 relative p-1 mt-2' />
+            case 'Regeneration': return <img src={regeneration} alt="" className='w-[70px] h-[70px] z-10 relative p-1 mt-2' />
+            case 'PointBonus': return <img src={pointsbonus} alt="" className='w-[70px] h-[70px] z-10 relative p-1 mt-2' />
+            case 'Stamina': return <img src={waterCamel} alt="" className='w-[70px] h-[70px] z-10 relative p-1 mt-2' />
+        }
+    }
 
 const BoostTable = () => {
     const api = useApi()
@@ -67,8 +72,8 @@ const BoostTable = () => {
             {upgrades.map((upgrade, index) => (
                 <div className='bg-black rounded-2xl px-4 py-2 flex justify-between' key={index}>
                     <div className='text-left'>
-                        <p className='text-lg'>{camelNames[index % camelNames.length]}</p>
-                        <p className='text-[10px] opacity-80'>{camelDescr[index % camelDescr.length]}</p>
+                        <p className='text-lg'>{upgrade.type}</p>
+                        <p className='text-[10px] opacity-80'>{upgrade.description}</p>
                         <div className='relative mt-1'>
                             <div className='flex gap-1 items-center'>
                                 <div className='cursor-pointer' onClick={() => {buyUpgrades(upgrade.boost_id)}}>
@@ -78,11 +83,15 @@ const BoostTable = () => {
                                     <Stars level={upgrade.lvl} />
                                 </div>
                             </div>
-                            <p className='absolute top-1 left-1 text-[13px] text-center w-[22px] cursor-pointer' onClick={() => {buyUpgrades(upgrade.boost_id)}}>1k</p>
+                            {upgrade.price !== 0 && (
+                                <>
+                                 <p className='absolute top-1 left-1 text-[13px] text-center w-[22px] cursor-pointer' onClick={() => {buyUpgrades(upgrade.boost_id)}}>{upgrade.price}</p>
+                                </>
+                            )}
                         </div>
                     </div>
                     <div className='relative'>
-                        <img src={camelImages[index % camelImages.length]} alt="" className='w-[70px] h-[70px] z-10 relative p-1 mt-2' />
+                        {GetIcon(upgrade.type)}
                         <div className='absolute w-[80px] inset-0 bg-myColor-700 h-[50px] top-5 left-0 rounded-full blur-lg'></div>
                     </div>
                 </div>

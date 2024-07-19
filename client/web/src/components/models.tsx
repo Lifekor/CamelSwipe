@@ -81,7 +81,10 @@ export interface friends {
 
 export interface boost {
 	boost_id: string,
-  lvl: number
+  lvl: number,
+	type: string,
+	description: string,
+	price: number
 }
 
 
