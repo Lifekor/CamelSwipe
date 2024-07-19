@@ -3,7 +3,7 @@ version: '3.3'
 services:
   api:
     build:
-      context: ../src/backend
+      context: ../backend
       dockerfile: Dockerfile
     ports:
       - '8000:8000'
@@ -13,7 +13,7 @@ services:
 
   react-app:
     build:
-      context: ../src/client/web
+      context: ../client/web
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
