@@ -2,8 +2,8 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ["mainApp"]  # Указываем ветку, для которой срабатывает workflow
-  workflow_dispatch:
+    branches: ["mainApp"]  # Workflow запускается при пушах в ветку mainApp
+  workflow_dispatch:  # Позволяет запускать workflow вручную
 
 permissions:
   contents: read
@@ -24,10 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout mainApp branch
-        run: git checkout mainApp  # Переключаемся на ветку mainApp
-
-      - name: Set up Docker
+      - name: Set up Docker Buildx
         uses: production/setup-buildx-action@v2
 
       - name: Set up Docker Compose
@@ -37,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './build'
+          path: './build'  # Путь к собранным статическим файлам
 
       - name: Deploy to GitHub Pages
         id: deployment
