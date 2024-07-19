@@ -2,7 +2,7 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ["mainApp"]  # Workflow запускается при пушах в ветку mainApp
+    branches: ["main"]  # Workflow запускается при пушах в ветку mainApp
   workflow_dispatch:  # Позволяет запускать workflow вручную
 
 permissions:
