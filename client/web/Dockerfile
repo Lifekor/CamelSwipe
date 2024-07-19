@@ -20,10 +20,6 @@ WORKDIR /
 
 COPY package*.json ./
 
-RUN npm run build
-
-COPY --from=build /app/build /usr/share/nginx/html
-
 RUN npm install --only=production
 
 COPY . .
