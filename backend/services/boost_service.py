@@ -28,7 +28,11 @@ class BoostService:
         for user_boost in boosts:
             boost = await self.boost_collection.find_one({'_id': ObjectId(user_boost['boost_id'])})
             boost_type = BoostType(boost['boost_type'])
-            boost = BoostDto(boost_id=str(boost['_id']), lvl=user_boost['lvl'], description=boost['description'], type=boost_type.name)
+            next = 0
+            if user_boost['lvl'] < 10:
+                next = prices[user_boost['lvl']]
+            boost = BoostDto(boost_id=str(boost['_id']), lvl=user_boost['lvl'], description=boost['description'], type=boost_type.name,
+                             price=next)
             dtos.append(boost)
 
         return dtos

@@ -8,5 +8,6 @@ class BoostDto(BaseModel):
     lvl: int
     type: str
     description: str
+    price: float
 
 
