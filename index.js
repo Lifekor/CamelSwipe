@@ -25,7 +25,7 @@ function sendStartGameMessage(chatId) {
             [
                 {
                     text: 'start app',
-                    web_app: { url: 'https://lifekor.github.io/CamelSwipe/' }
+                    web_app: { url: 'https://camelminer.netlify.app/' }
                 }
             ]
         ]
