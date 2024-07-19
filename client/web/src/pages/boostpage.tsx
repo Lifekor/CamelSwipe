@@ -1,7 +1,5 @@
 import BoostTable from '../components/ui/boostpage/boostTable'
 
-
-
 const Boostpage = () => {
 	return (
 		<>

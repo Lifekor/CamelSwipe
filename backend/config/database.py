@@ -35,10 +35,10 @@ async def init_db_async():
 
 async def create_boosts():
     boosts = [
-        Boost(reward=5, boost_type=BoostType.Speed),
-        Boost(reward=100, boost_type=BoostType.Stamina),
-        Boost(reward=5, boost_type=BoostType.Regeneration),
-        Boost(reward=5, boost_type=BoostType.PointBonus)
+        Boost(reward=5, boost_type=BoostType.Speed, description="For each upgrade, +5% to speed"),
+        Boost(reward=100, boost_type=BoostType.Stamina, description="Increase your water supply"),
+        Boost(reward=5, boost_type=BoostType.Regeneration, description="Speeds up water reserve recovery"),
+        Boost(reward=5, boost_type=BoostType.PointBonus, description="Continue mining points when you are not in the game")
     ]
     boost_collection = db[Collections.BOOSTS]
 
