@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
-const TOKEN = "7438782862:AAHukn2ZafRuauqFLxWHjt01zrdV8ENxv6g";
+const TOKEN = "7452454942:AAGVzrz3XoecLCRhol5G0HM7ICeBrfcZ95E"; // замените на ваш токен
 const server = express();
 const bot = new TelegramBot(TOKEN, {
     polling: true
@@ -13,18 +13,33 @@ const queries = {};
 server.use(express.static(path.join(__dirname, 'CamelSwipe')));
 
 bot.onText(/help/, (msg) => bot.sendMessage(msg.from.id, "Say /game if you want to play."));
-bot.onText(/start|game/, (msg) => bot.sendGame(msg.from.id, gameName));
+
+bot.onText(/start|game/, (msg) => {
+    const chatId = msg.chat.id;
+    sendStartGameMessage(chatId);
+});
+
+function sendStartGameMessage(chatId) {
+    const inlineKeyboard = {
+        inline_keyboard: [
+            [
+                {
+                    text: 'start app',
+                    web_app: { url: 'https://lifekor.github.io/CamelSwipe/' }
+                }
+            ]
+        ]
+    };
+    bot.sendMessage(chatId, 'start game', { reply_markup: inlineKeyboard });
+}
 
 bot.on("callback_query", function (query) {
     if (query.game_short_name !== gameName) {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
     } else {
         queries[query.id] = query;
-        let gameurl = "https://lifekor.github.io/CamelSwipe/"; // Замените на URL вашего сервера
-        bot.answerCallbackQuery({
-            callback_query_id: query.id,
-            url: gameurl
-        });
+        const chatId = query.message.chat.id; // исправлено на query.message.chat.id
+        sendStartGameMessage(chatId); // использование общей функции
     }
 });
 
