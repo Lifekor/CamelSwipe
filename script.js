@@ -82,17 +82,22 @@ let coinSpawnTimer = 0;
 const coins = [];
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * ratio;
+    canvas.height = window.innerHeight * ratio;
+    ctx.scale(ratio, ratio);
+
     lanes = [
-        canvas.width * 0.40,
-        canvas.width * 0.45,
-        canvas.width * 0.50,
-        canvas.width * 0.55,
-        canvas.width * 0.60
+        canvas.width / 2 * 0.8,
+        canvas.width / 2 * 0.9,
+        canvas.width / 2,
+        canvas.width / 2 * 1.1,
+        canvas.width / 2 * 1.2
     ];
 }
 window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
 
 function drawTrack() {
     ctx.drawImage(trackImg, 0, 0, canvas.width, canvas.height);
