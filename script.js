@@ -16,6 +16,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
         tapFill.style.transform = `scaleX(${fillPercentage})`; // Масштабируем fill от 0 до 1
     }
 
+    if (window.Telegram && window.Telegram.WebApp) {
+        const initDataUnsafe = Telegram.WebApp.initDataUnsafe;
+        const userId = initDataUnsafe?.user?.id;
+
+        if (userId) {
+            console.log('User ID:', userId);
+            const xuiDiv = document.getElementById('xui');
+            if (xuiDiv) {
+                xuiDiv.textContent = userId;
+            }
+        } else {
+            console.error('User ID not found.');
+        }
+
     // Пример уменьшения количества тапов
     function decreaseTaps() {
         if (taps > 0) {
@@ -36,7 +50,7 @@ const userId = initDataUnsafe?.user?.id
 
 let tapText = [];
 let tapTimer = 0;
-let coinCount = userId;
+let coinCount = 0;
 let taps = 1000;
 let progress = 0;
 let speed = 2;
