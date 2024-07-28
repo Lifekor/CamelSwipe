@@ -5,7 +5,9 @@ import { useNecessary } from '../../../hooks/necessary'
 import useApi from '../../../requestProvider/apiHandler'
 import { ReactComponent as Arrow } from '../../images/arrow.svg'
 import { ReactComponent as Coin } from '../../images/coin.svg'
+import { ReactComponent as Completed } from '../../images/taskpage/apply.svg'
 import boost from '../../images/taskpage/boost.png'
+import { ReactComponent as Close } from '../../images/taskpage/close.svg'
 import { ReactComponent as Discord } from '../../images/taskpage/discord.svg'
 import friends from '../../images/taskpage/friends.png'
 import { ReactComponent as Instagram } from '../../images/taskpage/instagram.svg'
@@ -14,12 +16,17 @@ import { ReactComponent as TikTok } from '../../images/taskpage/tiktok.svg'
 import { ReactComponent as Twitter } from '../../images/taskpage/twitter.svg'
 import { ReactComponent as Welcome } from '../../images/taskpage/welcome.svg'
 import { ReactComponent as Youtube } from '../../images/taskpage/youtube.svg'
-import { missionsInterface } from '../../models'
+import { infoTaskModal, missionsInterface } from '../../models'
+
 const TaskTable = () => {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
   const {identityId} = useNecessary()
   const [missions, setMissions] = useState<missionsInterface>()
+  const [openModal, setOpenMondal] = useState<boolean>(false)
+  const [verifying, setVerifyng] = useState<boolean>(false)
+  const [infoForModal, setInfoForModal] = useState<infoTaskModal>(
+    {id: '', name: '', reward: 0, link: '', status: '', icon_type: ''}
+  )
 
   const api = useApi()
 
@@ -41,31 +48,36 @@ const TaskTable = () => {
     getMissions()
   }, [identityId])
 
+  const saveInfoForModal = (id: string, name:string, reward: number, link:string, status:string, icon_type:string) => {
+    setInfoForModal({id, name, reward, link, status, icon_type})
+    setOpenMondal(true)
+  }
+
   const startMission = async (id:string) => {
     const res = await api({
       method: 'POST',
       url: `/mission/navigate?mission_id=${id}`,
       headers: {
-       'user-id': identityId
+       'x-user-id': identityId
       }
     })
   }
 
   const checkMission = async (id:string) => {
-    setLoading(true)
+    setVerifyng(true)
     try {
     const res = await api({
       method: 'POST',
       url: `/mission/check?mission_id=${id}`,
       headers: {
-        'user-id': identityId
+        'x-user-id': identityId
        }
     })
     await getMissions()
-    setLoading(false)
+    setVerifyng(false)
    }catch(e) {
-    setLoading(false)
     console.log(e);
+    setVerifyng(false)
   }
   }
 
@@ -74,7 +86,7 @@ const TaskTable = () => {
       method: 'POST',
       url: `/mission/claim?mission_id=${id}`,
       headers: {
-        'user-id': identityId
+        'x-user-id': identityId
        }
     })
     await getMissions()
@@ -87,6 +99,24 @@ const TaskTable = () => {
     link: string,
     type: string
   }
+
+
+  useEffect(() => {
+    if (missions && missions.data) {
+      const mission = missions.data.find(m => m.id === infoForModal.id);
+      
+      if (mission) {
+        setInfoForModal({
+          id: mission.id,
+          name: mission.name,
+          reward: mission.reward,
+          link: mission.link,
+          status: mission.status,
+          icon_type: mission.icon_type
+        });
+      }
+    }
+  }, [missions, setInfoForModal]);
 
  const GetStatus = ({ status, id, link, type }: statusProps) => {
     const utils = initUtils()
@@ -115,28 +145,36 @@ const TaskTable = () => {
       case 'open':
         return (
           <div>
-            <div className='w-[50px] h-[30px] flex items-center justify-center'
+            <div className='w-[200px] h-[45px] flex items-center justify-center bg-myColor-800 rounded-2xl border border-myColor-850 font-medium'
             onTouchStart={() => handleButtonClick(id, link)}>
-                  <Arrow className=''/>
+                  <p>Execute</p>
             </div>
           </div>
         );
       case 'execution':
           return (
-            <div className='w-[50px] h-[30px] flex items-center justify-center px-10 border border-myColor-400 text-myColor-400 rounded'>
-            <p className='font-medium' onTouchStart={() => checkMission(id)}>Verify{loading && ('...')}</p>
-            </div>
+            <>
+              {verifying ? (
+                <>
+                <p className='text-xl text-center font-medium px-5'>Checking if the task is completed, <br/> please wait</p>
+                </>
+              ) : (
+                <div className='w-[110px] h-[45px] flex items-center justify-center bg-myColor-900 rounded-2xl border border-myColor-950 font-medium' onTouchStart={() => checkMission(id)}>
+                <p>Check</p>
+                </div>
+              )}
+            </>
           );
       case 'verified':
         return (
-          <div className='w-[50px] h-[30px] flex items-center justify-center px-10 border border-myColor-400 text-myColor-400 rounded'>
+          <div className='w-[100px] h-[45px] flex items-center justify-center bg-myColor-800 rounded-2xl border border-myColor-850 font-medium'>
           <p className='font-medium' onTouchStart={() => claimMission(id)}>Claim</p>
           </div>
         );
       case 'completed':
         return (
-          <div className='w-[50px] h-[30px] flex items-center justify-center border px-10 border-myColor-450 text-myColor-450 rounded'>
-          <p className='font-bold text-[12px]'>Completed</p>
+          <div className='w-[110px] h-[45px] flex items-center justify-center bg-myColor-900 rounded-2xl border border-myColor-950 font-medium opacity-35'>
+            <Completed/>
           </div>
         );
 
@@ -146,29 +184,30 @@ const TaskTable = () => {
   };
 
   interface iconProps {
-    icon: string
+    icon: string,
+    width: number
   }
 
-  const GetIcon = ({ icon }:iconProps) => {
+  const GetIcon = ({ icon, width }:iconProps) => {
     switch (icon) {
       case 'Welcome':
-      return <Welcome className='w-[30px]' />;
-      case 'Youtube':
-        return <Youtube className='w-[30px]' />;
+      return <Welcome className={`w-[${width}px]`} />;
+      case 'YouTube':
+        return <Youtube className={`w-[${width}px]`} />;
       case 'Instagram':
-        return <Instagram className='w-[30px]' />;
+        return <Instagram className={`w-[${width}px]`} />;
       case 'Discord':
-        return <Discord className='w-[30px]' />;
+        return <Discord className={`w-[${width}px]`} />;
       case 'Telegram':
-        return <Telegram className='w-[30px]' />;
+        return <Telegram className={`w-[${width}px]`} />;
       case 'Tiktok':
-        return <TikTok className='w-[30px]' />;
-      case 'Twitter':
-        return <Twitter className='w-[30px]' />;
+        return <TikTok className={`w-[${width}px]`} />;
+      case 'X':
+        return <Twitter className={`w-[${width}px]`} />;
       case 'Boost':
-        return <img src={boost} className='w-[30px]' />;
+        return <img src={boost} className={`w-[${width}px]`} />;
       case 'Friend':
-        return <img src={friends} alt='friends' className='w-[30px]' />;
+        return <img src={friends} alt='friends' className={`w-[${width}px]`} />;
       default:
         return null;
     }
@@ -177,24 +216,57 @@ const TaskTable = () => {
   
 	return (
 		<>
-    <div className='h-[300px] overflow-y-scroll'>
+    <div className='h-[330px] overflow-y-scroll'>
     {missions?.data.map((mission) => (
-      <div  className={`flex justify-between mt-5 items-center text-sm py-2 px-2 border-opacity-0 text-white bg-black rounded-3xl shadow-md shadow-myColor-150 h-[60px]`} >
+      <div  className={`flex justify-between mt-2 items-center text-sm py-2 px-2 border-opacity-0 text-white bg-black rounded-3xl shadow-md shadow-myColor-150 h-[60px]`} >
       <div className='flex gap-2 items-center ml-2'>
-       <GetIcon icon={mission.icon_type}/>
-        <div className='flex-col ml-2'>
+       <GetIcon icon={mission.icon_type} width={35}/>
+        <div className='flex-col'>
           <p className='font-medium text-[12px]'>{mission.name}</p>
             <div className='flex items-center'>
-              <Coin className='ml-3'/>
+              <Coin className=''/>
               <p className='text-[13px] font-medium'>+{mission.reward}</p>
             </div>
           </div>
         </div>
 
-        <GetStatus status={mission.status} type={mission.icon_type} id={mission.id} link={mission.id}/>
+      <div className='w-[50px] h-[30px] flex items-center justify-center'>
+        <Arrow className='' onClick={() => saveInfoForModal(mission.id, mission.name, mission.reward, mission.link, mission.status, mission.icon_type)}/>
+      </div>
+
      </div>
     ))}
     </div>
+
+
+    {openModal && (
+      <>
+      <div className='fixed bottom-0 w-full bg-myColor-150 h-[60vh] left-0 z-[999] rounded-t-[30px] px-5 py-4'>
+        <div className='w-full flex justify-end'>
+          <Close className='float-right w-[30px] h-[30px]' onClick={() => setOpenMondal(false)}/>
+        </div>
+
+        <div className='flex flex-col justify-center items-center'>
+          <div className='w-[120px]'>
+             <GetIcon icon={infoForModal.icon_type} width={130} />
+          </div>
+          <p className='text-2xl w-[200px] text-center font-medium'>{infoForModal.name}</p>
+
+          <div className='flex mt-7 items-center gap-2 w-full justify-center relative'>
+            <div className='w-[150px] h-[25px] absolute bg-myColor-700 rounded-full blur-lg z-0' style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+            <Coin className='w-[35px] h-[35px] z-10'/>
+            <p className='text-2xl font-medium relative z-10'>+{infoForModal.reward}</p>
+          </div>
+
+          <div className='absolute bottom-5'>
+          <GetStatus status={infoForModal.status} link={infoForModal.link} id={infoForModal.id} type={infoForModal.icon_type} />
+          </div>
+
+        </div>
+
+      </div>
+      </>
+    )}
 		</>
 	)
 }

@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Camel Runner</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
+
 <body>
+
     <div id="ui">
         <div class="coin-container">
             <div class="coin-icon"></div>
             <div id="coin-count-text">0</div>
+            <div id='xui'>0</div>
         </div>
     </div>
+
+    <div id='redirect'>
+        <div>
+            Go to menu
+        </div>
+    </div>
+    
     <div class="progress-container">
+        
         <div class="progress-bar">
             <div class="progress-background"></div>
             <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
@@ -24,11 +37,25 @@
         <span id="remaining-taps">975</span>/<span id="total-taps">1000</span>
         <img src="textures/water.png" alt="Water Icon">
     </div>
+
     <div class="tap-bar-container">
         <div class="tap-fill" id="tap-fill"></div>
         <div class="tap-bar"></div>
     </div>
+    
     <canvas id="gameCanvas"></canvas>
     <script src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const redirectDiv = document.getElementById('redirect');
+            redirectDiv.addEventListener('click', () => {
+                const params = new URLSearchParams(window.location.search);
+                const gameUrl = `https://camelminer.netlify.app/boost/?${params.toString()}`;
+                console.log(gameUrl);
+                window.location.href = gameUrl;
+            });
+        });
+    </script>
 </body>
 </html>

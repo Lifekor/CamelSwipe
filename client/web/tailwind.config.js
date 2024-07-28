@@ -19,7 +19,11 @@ module.exports = {
           500: '#11E0AB',
           600: '#F5C97A',
           700: '#E3AC52',
-          750: '#0E0E0D'
+          750: '#0E0E0D',
+          800: '#FAB13A',
+          850: '#FFCF80',
+          900: '#1A1919',
+          950: '#4D4D4D'
         },
       },
       fontFamily: {
@@ -29,7 +33,7 @@ module.exports = {
         'spin-slow': 'spin 6s linear infinite',
       },
       backgroundImage: {
-        'gray-gradient': "linear-gradient(90deg, #00FFBE 0%, #D000FF 100%)",
+        'gray-gradient': "linear-gradient(90deg, #D1852D 0%, #995A12 100%)",
       }
     },
   },

@@ -7,7 +7,7 @@ import { useTelegram } from '../hooks/useTelegram'
 const Friendspage = () => {
 const utils = initUtils()
 const {userId} = useTelegram()
-const shareUrl = `https://t.me/cameldevmainopsbot?start=${userId}`
+const shareUrl = `https://t.me/fuerfiuatbot?start=${userId}`
 const [copySuccess, setCopySuccess] = useState<string>('')
 
 const handleShareClick = () => {
@@ -43,9 +43,11 @@ const copyToClipboard = () => {
 
 	return (
 		<>
-		  <p className='text-white font-bold pb-2 pt-2 border-b-[1px] text-xl font-Montserrat border-black'>Friends</p>
-
-		   <div className='flex justify-center font-Montserrat'>
+		<div className='h-[50px] items-center flex justify-center text-white text-2xl font-bold rounded-t-[30px] gap-2 bg-black bg-opacity-85'>
+			Friends
+		</div>
+		<div className='h-full overflow-y-scroll pb-[150px] bg-myColor-700'>
+		<div className='flex justify-center font-Montserrat'>
 			  <div className='max-w-[350px] w-full'>
 					<div className='mt-4'>
 						<InviteLink/>
@@ -55,20 +57,23 @@ const copyToClipboard = () => {
 						<InvitedTable/>
 					</div>
 
-					<div className='flex justify-between flex-wrap items-center text-white mt-12'>
+					<div className='absolute bottom-0 mb-[100px] w-full left-0 px-5'>
+					<div className='flex justify-between flex-wrap items-center text-white mt-4'>
 
-						<button className='bg-myColor-750 rounded-xl py-3 p-2 w-[280px] font-bold' onClick={() => handleShareClick()}>
+						<button className='bg-myColor-750 rounded-xl py-3 p-2 w-[280px] font-bold' onTouchStart={() => handleShareClick()}>
 							Invite a friend
 						</button>
 
-						<button className='bg-black p-2 px-3 py-3 rounded-xl' onClick={() => copyToClipboard()}>
+						<button className='bg-black p-2 px-3 py-3 rounded-xl' onTouchStart={() => copyToClipboard()}>
 							<Copy/>
 						</button>
 
 					</div>
+					</div>
 			  </div>
 				
 			</div>
+		</div>
 		</>
 	)
 }
