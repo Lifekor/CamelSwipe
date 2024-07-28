@@ -20,6 +20,12 @@ class PointService:
         points_farmed += point['current_water']
         if points_farmed > 1000:
             points_farmed = 1000
+
+        point['current_water'] = points_farmed
+        await self.point_collection.update_one(
+                {"_id": point['_id']},
+                {"$set": point}
+            )
         return PointDto(current_coin=point['current_coin'],
                         coin_per_hour=point['coin_per_hour'],
                         speed=point['speed'],
