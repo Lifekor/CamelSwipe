@@ -31,7 +31,7 @@ class PointService:
                         speed=point['speed'],
                         stamina=point['stamina'],
                         regeneration=point['regeneration'],
-                        current_water=points_farmed,
+                        current_water=point['current_water'],
                         current_path=point['current_path'])
 
 
