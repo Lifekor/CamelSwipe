@@ -11,3 +11,7 @@ router = APIRouter()
 async def get_async(user_id: int, service: PointService = Depends()):
     return await service.get_async(user_id=user_id)
 
+@router.post('/claim')
+async def claim_async(user_id: int, service: PointService = Depends()):
+    return await service.claim_async(user_id=user_id)
+

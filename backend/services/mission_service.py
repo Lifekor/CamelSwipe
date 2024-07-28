@@ -18,6 +18,7 @@ from schemas.missions.missions_dto import UserMissionDataDto, UserMissionDto
 class MissionService:
     friends_collection = None
     user_mission_collection = None
+    point_collection = None
     user_collection = None
     mission_collection = None
 
@@ -26,6 +27,7 @@ class MissionService:
         self.user_mission_collection = db[Collections.USER_MISSIONS]
         self.user_collection = db[Collections.USERS]
         self.friends_collection = db[Collections.FRIENDS]
+        self.point_collection = db[Collections.COINS]
 
     async def get_async(self, user_id: str) -> UserMissionDataDto:
         missions = await self.mission_collection.find().to_list(length=None)
@@ -140,9 +142,18 @@ class MissionService:
 
         user_mission['status'] = MissionStatus.Completed.value
         user_mission['complete_date'] = datetime.datetime.utcnow()
+        point = await self.point_collection.find_one({'user_id': ObjectId(user_id['_id'])})
+        if point is None:
+            raise CustomException("Point not found")
+
+        point['current_coin'] += mission['reward']
         await self.user_mission_collection.update_one(
             {"_id": user_mission['_id']},
             {"$set": user_mission}
+        )
+        await self.point_collection.update_one(
+            {"_id": point['_id']},
+            {"$set": point}
         )
 
     async def _get_user_mission_async(self, mission_id: str, user_id: str):

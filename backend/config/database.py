@@ -21,6 +21,7 @@ db = client.get_database("camel")  # todo
 
 async def init_db_async():
     try:
+        #await db[Collections.MISSIONS].delete_many({})
         boost_collection = db[Collections.BOOSTS]
         missions_collection = db[Collections.MISSIONS]
 
