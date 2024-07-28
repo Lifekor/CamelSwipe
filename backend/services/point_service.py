@@ -13,11 +13,6 @@ class PointService:
     async def get_async(self, user_id: int):
         user = await self._get_user_async(user_id=user_id)
         point = await self.point_collection.find_one({'user_id': ObjectId(user['_id'])})
-        point['stamina'] = 1000
-        await self.point_collection.update_one(
-            {"_id": point['_id']},
-            {"$set": point}
-        )
         return PointDto(current_coin=point['current_coin'],
                         coin_per_hour=point['coin_per_hour'],
                         speed=point['speed'],
