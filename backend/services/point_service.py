@@ -28,7 +28,7 @@ class PointService:
 
         point['current_coin'] += 1
         point['current_path'] += current_path
-        point['current_watter'] -= 1
+        point['current_water'] -= 1
         await self.point_collection.update_one(
             {"_id": point['_id']},
             {"$set": point}
