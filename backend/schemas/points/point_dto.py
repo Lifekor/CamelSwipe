@@ -8,4 +8,4 @@ class PointDto(BaseModel):
     stamina: float
     regeneration: float
     current_water: float
-    current_path: int
+    current_path: float
