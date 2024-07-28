@@ -40,7 +40,7 @@ class PointService:
         point = await self.point_collection.find_one({'user_id': ObjectId(user['_id'])})
 
         point['current_coin'] += 1
-        point['current_path'] += current_path
+        point['current_path'] = current_path
         point['current_water'] -= 1
 
         point['last_visit'] = datetime.datetime.utcnow()
