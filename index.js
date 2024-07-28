@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
+const { log } = require('console')
 const TOKEN = "7452454942:AAGVzrz3XoecLCRhol5G0HM7ICeBrfcZ95E"; // замените на ваш токен
 const server = express();
 const bot = new TelegramBot(TOKEN, {
@@ -32,6 +33,8 @@ function sendStartGameMessage(chatId) {
     };
     bot.sendMessage(chatId, 'start game', { reply_markup: inlineKeyboard });
 }
+
+
 
 bot.on("callback_query", function (query) {
     if (query.game_short_name !== gameName) {

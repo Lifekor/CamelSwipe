@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const tapFill = document.getElementById('tap-fill');
     const remainingTaps = document.getElementById('remaining-taps');
-    const totalTaps = document.getElementById('total-taps');
 
     let taps = 1000;
     const maxTaps = 1000;
@@ -15,20 +14,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const fillPercentage = taps / maxTaps;
         tapFill.style.transform = `scaleX(${fillPercentage})`; // Масштабируем fill от 0 до 1
     }
-
-    if (window.Telegram && window.Telegram.WebApp) {
-        const initDataUnsafe = Telegram.WebApp.initDataUnsafe;
-        const userId = initDataUnsafe?.user?.id;
-
-        if (userId) {
-            console.log('User ID:', userId);
-            const xuiDiv = document.getElementById('xui');
-            if (xuiDiv) {
-                xuiDiv.textContent = userId;
-            }
-        } else {
-            console.error('User ID not found.');
-        }
 
     // Пример уменьшения количества тапов
     function decreaseTaps() {
@@ -39,14 +24,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-  
-    updateTapFill(); 
+    // Вызовите decreaseTaps() при необходимости, чтобы увидеть эффект
+    updateTapFill(); // Изначальное обновление
 });
-
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const initDataUnsafe = Telegram.WebApp.initDataUnsafe
-const userId = initDataUnsafe?.user?.id
 
 let tapText = [];
 let tapTimer = 0;
@@ -55,6 +35,43 @@ let taps = 1000;
 let progress = 0;
 let speed = 2;
 let frameCounter = 0;
+let stamina = 0
+let regeneration = 0
+
+const params = new URLSearchParams(window.location.search);
+const userId = params.get('id'); 
+console.log(userId);
+const totalTaps = document.getElementById('total-taps');
+
+const getInformation = async () => {
+ try {
+    const res = await axios.get('http://127.0.0.1:8000/game/?user_id=123')
+    taps = res.data.current_water
+    stamina = res.data.stamina
+    totalTaps.innerText = stamina
+    progress = res.data.current_path
+    regeneration = res.data.regeneration
+    coinCount = res.data.current_coin
+    document.getElementById('coin-count-text').innerText = coinCount
+ }catch (e) {
+
+ }
+}
+
+const ebuchiyTap = async (claim) => {
+    try {
+         await axios.post(`http://127.0.0.1:8000/game/claim?user_id=123&current_path=${progress}&coin=${claim}`)
+    }catch(e) {
+        console.log(e);
+    }
+}
+
+getInformation()
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+
 
 const frameDelay = 2;
 
@@ -119,6 +136,9 @@ function drawTrack() {
     ctx.drawImage(trackImg, 0, 0, canvas.width, canvas.height);
 }
 
+
+
+
 function drawCamel() {
     const camelScale = Math.min(canvas.width / 1080, canvas.height / 1920);
     const scaledCamelWidth = camelWidth * camelScale;
@@ -171,6 +191,9 @@ function drawCoins() {
     }
 }
 
+
+
+
 function drawTapText() {
     ctx.font = "3vh 'LilitaOne-Regular'";
     ctx.fillStyle = "white";
@@ -213,12 +236,14 @@ function updateProgress() {
 function updateTapBar() {
     const tapFill = document.getElementById('tap-fill');
     const remainingTaps = document.getElementById('remaining-taps');
+
     if (tapTimer <= 0) {
         taps = Math.min(taps + 1, 1000);
-        tapTimer = 600;
+        tapTimer = regeneration * 200;
     }
+
     tapTimer--;
-    remainingTaps.innerText = taps;
+    remainingTaps.innerText = Math.round(taps)
     const fillPercentage = taps / 1000;
     tapFill.style.transform = `scaleX(${fillPercentage})`;
 }
@@ -242,6 +267,7 @@ function triggerVibration() {
 }
 
 function handleTap(event) {
+    if (taps <= 0) return;
     const tapX = event.clientX;
     const tapY = event.clientY;
     let tapTextContent = 'x1';
@@ -261,6 +287,7 @@ function handleTap(event) {
             document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
             tapOnCoin = true;
             progress += 0.08;
+            ebuchiyTap(2)
             break;
         }
     }
@@ -268,7 +295,9 @@ function handleTap(event) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
         progress += 0.08;
+        ebuchiyTap(1)
     }
+    
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
     if (taps > 0) {
         taps--;
