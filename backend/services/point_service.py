@@ -1,3 +1,5 @@
+import datetime
+
 from bson import ObjectId
 
 from config.collections import Collections
@@ -13,12 +15,17 @@ class PointService:
     async def get_async(self, user_id: int):
         user = await self._get_user_async(user_id=user_id)
         point = await self.point_collection.find_one({'user_id': ObjectId(user['_id'])})
+        points_farmed = (datetime.datetime.utcnow() - point['last_visit']).total_seconds() * point['regeneration']
+
+        points_farmed += point['current_water']
+        if points_farmed > 1000:
+            points_farmed = 1000
         return PointDto(current_coin=point['current_coin'],
                         coin_per_hour=point['coin_per_hour'],
                         speed=point['speed'],
                         stamina=point['stamina'],
                         regeneration=point['regeneration'],
-                        current_water=point['current_water'],
+                        current_water=points_farmed,
                         current_path=point['current_path'])
 
 
@@ -29,6 +36,8 @@ class PointService:
         point['current_coin'] += 1
         point['current_path'] += current_path
         point['current_water'] -= 1
+
+        point['last_visit'] = datetime.datetime.utcnow()
         await self.point_collection.update_one(
             {"_id": point['_id']},
             {"$set": point}
