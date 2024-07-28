@@ -35,11 +35,11 @@ class PointService:
                         current_path=point['current_path'])
 
 
-    async def claim_async(self, user_id: int, current_path: float):
+    async def claim_async(self, user_id: int, current_path: float, coin: float):
         user = await self._get_user_async(user_id=user_id)
         point = await self.point_collection.find_one({'user_id': ObjectId(user['_id'])})
 
-        point['current_coin'] += 1
+        point['current_coin'] += coin
         point['current_path'] = current_path
         point['current_water'] -= 1
 
