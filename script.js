@@ -11,15 +11,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let taps = 1000;
     const maxTaps = 1000;
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const redirectDiv = document.getElementById('redirect');
-        redirectDiv.addEventListener('click', () => {
-            const params = new URLSearchParams(window.location.search);
-            const gameUrl = `https://camelminer.netlify.app/boost/?${params.toString()}`;
-            window.location.href = gameUrl;
-        });
-    });
-
     function updateTapFill() {
         const fillPercentage = taps / maxTaps;
         tapFill.style.transform = `scaleX(${fillPercentage})`; // Масштабируем fill от 0 до 1

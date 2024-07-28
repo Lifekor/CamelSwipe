@@ -14,6 +14,7 @@ body {
     font-family: 'LilitaOne-Regular';
     position: relative;
 }
+
 #gameCanvas {
     display: block;
     width: 100%;
@@ -31,6 +32,7 @@ body {
     padding: 4px 15px;
     border: 1px solid white;
     border-radius: 14px;
+    cursor: pointer;
 }
 
 #ui {
