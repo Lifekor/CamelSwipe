@@ -17,11 +17,10 @@ class PointService:
         point = await self.point_collection.find_one({'user_id': ObjectId(user['_id'])})
         points_farmed = (datetime.datetime.utcnow() - point['last_visit']).total_seconds() * point['regeneration']
 
-        points_farmed += point['current_water']
-        if points_farmed > 1000:
-            points_farmed = 1000
+        point['current_water'] += points_farmed
+        if point['current_water'] > 1000:
+            point['current_water'] = 1000
 
-        point['current_water'] = points_farmed
         await self.point_collection.update_one(
                 {"_id": point['_id']},
                 {"$set": point}
