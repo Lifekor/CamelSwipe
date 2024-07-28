@@ -25,16 +25,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    // Вызовите decreaseTaps() при необходимости, чтобы увидеть эффект
-    updateTapFill(); // Изначальное обновление
+  
+    updateTapFill(); 
 });
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const initDataUnsafe = Telegram.WebApp.initDataUnsafe
+const userId = initDataUnsafe?.user?.id
 
 let tapText = [];
 let tapTimer = 0;
-let coinCount = 0;
+let coinCount = userId;
 let taps = 1000;
 let progress = 0;
 let speed = 2;
