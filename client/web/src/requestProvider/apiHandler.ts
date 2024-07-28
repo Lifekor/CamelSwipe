@@ -5,8 +5,8 @@ const useApi = () => {
     const { setError } = useError();
 
     const baseURL = process.env.NODE_ENV === 'production'
-        ? 'http://localhost:8000'
-        : 'http://localhost:8000';
+        ? 'https://camelswipe2.onrender.com/'
+        : 'https://camelswipe2.onrender.com/';
 
     const api = axios.create({
         baseURL: baseURL,

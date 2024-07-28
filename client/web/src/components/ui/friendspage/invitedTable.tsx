@@ -40,7 +40,7 @@ const InvitedTable = () => {
 
 		<div className='text-white mt-5'>
 			<p className='text-center font-bold text-lg'>My friends</p>
-			<div className='overflow-y-scroll h-[230px]'>
+			<div className=''>
 			{friends.map((friend, index) => (
 				<div className='mt-4' key={index}>
 

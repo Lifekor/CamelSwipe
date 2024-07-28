@@ -87,5 +87,11 @@ export interface boost {
 	price: number
 }
 
-
-
+export interface infoTaskModal {
+	  id: string;
+		name: string;
+		reward: number;
+		link: string;
+		status: string;
+		icon_type: string;
+}

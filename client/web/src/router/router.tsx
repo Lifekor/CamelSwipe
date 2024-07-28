@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import RedirectToGame from '../components/services/redirectToGame'
 import { NavPanelProvider } from '../hooks/necessary'
 import Boostpage from '../pages/boostpage'
 import Friendspage from '../pages/friendspage'
@@ -29,6 +30,7 @@ const Router = () => {
 						  <Boostpage/>
 					</NavPanelProvider>
 				  }/>
+				<Route path="/redirect-to-game" element={<RedirectToGame />} />
 		</Routes>
 		</>
 	)

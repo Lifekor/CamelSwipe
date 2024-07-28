@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
-import background from '../components/images/background.png'
 import balance from '../components/images/balance.png'
 import { idInterface } from '../components/models'
 import useStore from '../components/store/zustand'
+import '../components/ui/background.css'
 import NavPanel from '../components/ui/NavPanel'
 import useApi from '../requestProvider/apiHandler'
+import { abbreviateNumber } from './convertNumber'
 import { useTelegram } from './useTelegram'
-
 interface NavContextType {
   identityId: string;
 }
@@ -36,11 +36,10 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   const {userId, user, name} = useTelegram()
   const once = useRef<boolean>(false)
 
-
   const getId = async (): Promise<void> => {
     const res = await api<idInterface>({
       method: 'POST',
-      url: `/auth/sign-in?user_id=${111}&username=${user !== null ? user : '111'}`
+      url: `/auth/sign-in?user_id=${111}&username=${user !== null ? user : 111}`
     })
     if (res) {
       updateRole(res?.role)
@@ -57,22 +56,23 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
 
   return (
     <NavContext.Provider value={{identityId}}>
-    <div className='relative'>
-    <img src={background} alt="" className='w-full' />
+      <div className='flex justify-between w-full mt-10 px-5 text-white font-Montserrat items-center'>
 
-    <div className='absolute top-4 right-4'>
-    <img src={balance} alt="" className='relative' />
-    <p className='absolute top-[6px] right-2 text-white'>123</p>
-  
-    </div>
-
-      <div className='absolute w-full z-10 top-36'>
-        <div className="bg-myColor-700 rounded-t-3xl text-center w-full pb-[100px]">
-          {children}
+        <div className='p-1 bg-gray-gradient rounded-2xl px-3 border '>
+          {user}
         </div>
+
+        <div className='relative'>
+          <img src={balance} alt="" />
+          <p className='absolute left-[53px] top-[7px]'>{abbreviateNumber(0)}</p>
+        </div>
+        
       </div>
-    </div>
-    <NavPanel />
+    <div className='background'/>
+		<div className='fixed w-full h-[83vh] rounded-t-[30px] bottom-0 font-Montserrat'>
+					{children}
+					<NavPanel/>
+		</div>
     </NavContext.Provider>
   );
 };

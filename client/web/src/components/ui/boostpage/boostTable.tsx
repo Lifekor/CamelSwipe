@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { abbreviateNumber } from '../../../hooks/convertNumber'
 import { useNecessary } from '../../../hooks/necessary'
 import useApi from '../../../requestProvider/apiHandler'
 import pointsbonus from '../../images/boostpage/pointsbonus.png'
@@ -85,7 +86,7 @@ const BoostTable = () => {
                             </div>
                             {upgrade.price !== 0 && (
                                 <>
-                                 <p className='absolute top-1 left-1 text-[13px] text-center w-[22px] cursor-pointer' onClick={() => {buyUpgrades(upgrade.boost_id)}}>{upgrade.price}</p>
+                                 <p className='absolute top-1 left-1 text-[13px] text-center w-[22px] cursor-pointer' onClick={() => {buyUpgrades(upgrade.boost_id)}}>{abbreviateNumber(upgrade.price)}</p>
                                 </>
                             )}
                         </div>
