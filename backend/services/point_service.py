@@ -15,7 +15,8 @@ class PointService:
     async def get_async(self, user_id: int):
         user = await self._get_user_async(user_id=user_id)
         point = await self.point_collection.find_one({'user_id': ObjectId(user['_id'])})
-        points_farmed = (datetime.datetime.utcnow() - point['last_visit']).total_seconds() * point['regeneration']
+        seconds = (datetime.datetime.utcnow() - point['last_visit']).total_seconds()
+        points_farmed = int(seconds // 6)
 
         point['current_water'] += points_farmed
         if point['current_water'] > 1000:
