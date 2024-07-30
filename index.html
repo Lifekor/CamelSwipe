@@ -48,7 +48,7 @@
             const redirectDiv = document.getElementById('redirect');
             redirectDiv.addEventListener('click', () => {
                 const params = new URLSearchParams(window.location.search);
-                const gameUrl = `https://camelminer.netlify.app/boost/?${params.toString()}`;
+                const gameUrl = `http://88.198.46.187:3000/boost/?${params.toString()}`;
                 console.log(gameUrl);
                 window.location.href = gameUrl;
             });
