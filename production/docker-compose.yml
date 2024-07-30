@@ -11,13 +11,23 @@ services:
     networks:
       - app_network
 
-  react-app:
+  nginx:
+    image: nginx:latest
+    ports:
+      - '8080:80'
+    volumes:
+      - ./nginx-config:/etc/nginx/conf.d
+      - ../client/web/build:/usr/share/nginx/html
+    networks:
+      - app_network
+    restart: always
+
+  react:
     build:
       context: ../client/web
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
-    command: ['npm', 'start']
     networks:
       - app_network
 

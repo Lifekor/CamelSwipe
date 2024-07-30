@@ -34,7 +34,11 @@ module.exports = {
       },
       backgroundImage: {
         'gray-gradient': "linear-gradient(90deg, #D1852D 0%, #995A12 100%)",
-      }
+      },
+      screens: {
+        'custom-sm': {'max': '350px'},
+        'h-xs': { 'raw': '(max-height: 667px)' },
+      },
     },
   },
   plugins: [],

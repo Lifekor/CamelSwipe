@@ -12,7 +12,8 @@ const [copySuccess, setCopySuccess] = useState<string>('')
 
 const handleShareClick = () => {
 	if (userId) {
-		utils.openLink(`https://telegram.me/share/url?url=${encodeURIComponent(shareUrl)}`);
+		const shareUrll = `https://t.me/fuerfiuatbot?start=${userId}`
+		utils.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrll)}`);
 	} else {
 		console.error('User ID is not available.');
 	}
@@ -43,7 +44,7 @@ const copyToClipboard = () => {
 
 	return (
 		<>
-		<div className='h-[50px] items-center flex justify-center text-white text-2xl font-bold rounded-t-[30px] gap-2 bg-black bg-opacity-85'>
+		<div className='h-[50px] items-center flex justify-center text-white text-2xl custom-sm:text-lg font-bold rounded-t-[30px] gap-2 bg-black bg-opacity-85'>
 			Friends
 		</div>
 		<div className='h-full overflow-y-scroll pb-[150px] bg-myColor-700'>
@@ -57,10 +58,10 @@ const copyToClipboard = () => {
 						<InvitedTable/>
 					</div>
 
-					<div className='absolute bottom-0 mb-[100px] w-full left-0 px-5'>
+				
 					<div className='flex justify-between flex-wrap items-center text-white mt-4'>
 
-						<button className='bg-myColor-750 rounded-xl py-3 p-2 w-[280px] font-bold' onTouchStart={() => handleShareClick()}>
+						<button className='bg-myColor-750 rounded-xl py-3 p-2 w-[280px] custom-sm:w-[250px]  font-bold' onTouchStart={() => handleShareClick()}>
 							Invite a friend
 						</button>
 
@@ -69,10 +70,12 @@ const copyToClipboard = () => {
 						</button>
 
 					</div>
+
 					</div>
+
 			  </div>
 				
-			</div>
+		
 		</div>
 		</>
 	)

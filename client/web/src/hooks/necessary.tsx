@@ -1,5 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import balance from '../components/images/balance.png'
+import { ReactComponent as Boost } from '../components/images/boost.svg'
 import { idInterface } from '../components/models'
 import useStore from '../components/store/zustand'
 import '../components/ui/background.css'
@@ -31,7 +33,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   const api = useApi()
   const [identityId, setIdentityId] = useState<string>('')
   const {updateRole} = useStore()
-
+  const location = useLocation()
   const id = 2010808497
   const {userId, user, name} = useTelegram()
   const once = useRef<boolean>(false)
@@ -39,7 +41,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   const getId = async (): Promise<void> => {
     const res = await api<idInterface>({
       method: 'POST',
-      url: `/auth/sign-in?user_id=${111}&username=${user !== null ? user : 111}`
+      url: `/auth/sign-in?user_id=${11}&username=${user !== null ? user : 11}`
     })
     if (res) {
       updateRole(res?.role)
@@ -56,23 +58,37 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
 
   return (
     <NavContext.Provider value={{identityId}}>
-      <div className='flex justify-between w-full mt-10 px-5 text-white font-Montserrat items-center'>
+      {location.pathname !== '/' ? (
+        <>
+        <div className='flex justify-between w-full mt-10 px-5 text-white font-Montserrat items-center'>
 
-        <div className='p-1 bg-gray-gradient rounded-2xl px-3 border '>
-          {user}
-        </div>
+          <Link to={'/boost'}  className='flex items-center bg-gray-gradient px-3 py-[2px] gap-1 border rounded-2xl'>
+              <Boost className='pb-[3px]' />
+              <p className='text-[12px] text-center tracking-wider'>Boost</p>
+          </Link>
 
-        <div className='relative'>
-          <img src={balance} alt="" />
-          <p className='absolute left-[53px] top-[7px]'>{abbreviateNumber(0)}</p>
+
+          <div className='relative'>
+            <img src={balance} alt="" />
+            <p className='absolute left-[53px] top-[7px]'>{abbreviateNumber(0)}</p>
+          </div>
+          
         </div>
-        
-      </div>
-    <div className='background'/>
-		<div className='fixed w-full h-[83vh] rounded-t-[30px] bottom-0 font-Montserrat'>
-					{children}
-					<NavPanel/>
-		</div>
+        <div className='background'/>
+        <div className='fixed w-full h-[83vh] rounded-t-[30px] bottom-0 font-Montserrat'>
+            {children}
+            <NavPanel/>
+        </div>
+        </>
+      ) : (
+        <>
+          <div className='w-full font-Montserrat'>
+              {children}
+              <NavPanel/>
+          </div>
+        </>
+      )} 
+      
     </NavContext.Provider>
   );
 };

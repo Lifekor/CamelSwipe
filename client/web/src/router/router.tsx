@@ -30,7 +30,7 @@ const Router = () => {
 						  <Boostpage/>
 					</NavPanelProvider>
 				  }/>
-				<Route path="/redirect-to-game" element={<RedirectToGame />} />
+				<Route path='/redirect-to-game' element={<RedirectToGame/>}/>
 		</Routes>
 		</>
 	)

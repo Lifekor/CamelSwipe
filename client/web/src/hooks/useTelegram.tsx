@@ -11,6 +11,7 @@ interface TelegramData {
 interface TelegramWebApp {
 	initDataUnsafe?: TelegramData;
 	close: () => void;
+    platform?: string
 }
 
 const tg: TelegramWebApp = (window as any).Telegram.WebApp;

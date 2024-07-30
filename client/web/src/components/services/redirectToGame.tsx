@@ -7,7 +7,9 @@ const RedirectToGame = () => {
     window.location.href = gameUrl;
   }, []);
 
-  return <div>Redirecting...</div>;
+  return <div className='text-2xl bg-myColor-800 h-[100vh] flex items-center justify-center text-white font-bold'>
+    <p className='text-center'>Get ready, the game is starting...</p>
+    </div>;
 };
 
 export default RedirectToGame;

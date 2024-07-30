@@ -71,9 +71,9 @@ const BoostTable = () => {
     return (
         <div className='flex flex-col gap-3 h-[400px] text-white'>
             {upgrades.map((upgrade, index) => (
-                <div className='bg-black rounded-2xl px-4 py-2 flex justify-between' key={index}>
+                <div className='bg-black rounded-2xl custom-sm:py-1 px-4 py-2 flex justify-between' key={index}>
                     <div className='text-left'>
-                        <p className='text-lg'>{upgrade.type}</p>
+                        <p className='text-lg custom-sm:text-base'>{upgrade.type}</p>
                         <p className='text-[10px] opacity-80'>{upgrade.description}</p>
                         <div className='relative mt-1'>
                             <div className='flex gap-1 items-center'>
