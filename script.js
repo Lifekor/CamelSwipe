@@ -133,25 +133,31 @@ resizeCanvas();
 
 
 function drawTrack() {
-    // Calculate the aspect ratio of the image
+    // Calculate the aspect ratio of the image and the canvas
     const imgAspectRatio = trackImg.width / trackImg.height;
     const canvasAspectRatio = canvas.width / canvas.height;
 
     let drawWidth, drawHeight;
+
+    // Determine the dimensions of the image to cover the canvas
     if (canvasAspectRatio > imgAspectRatio) {
-        // If the canvas is wider than the image
-        drawWidth = canvas.width;
-        drawHeight = canvas.width / imgAspectRatio;
-    } else {
-        // If the canvas is taller than the image
+        // Canvas is wider than the image
         drawHeight = canvas.height;
-        drawWidth = canvas.height * imgAspectRatio;
+        drawWidth = drawHeight * imgAspectRatio;
+    } else {
+        // Canvas is taller than the image
+        drawWidth = canvas.width;
+        drawHeight = drawWidth / imgAspectRatio;
     }
 
     // Calculate the offset to center the image
     const offsetX = (canvas.width - drawWidth) / 2;
     const offsetY = (canvas.height - drawHeight) / 2;
 
+    // Clear the canvas before drawing the image
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the image centered
     ctx.drawImage(trackImg, offsetX, offsetY, drawWidth, drawHeight);
 }
 
