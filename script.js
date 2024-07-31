@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const progressText = document.getElementById('progress-text');
     progressText.innerText = `${Math.floor(progress)}%`;
     resizeCanvas();
-    gameLoop(); // Запуск основного игрового цикла
+    gameLoop(); 
 
     const tapFill = document.getElementById('tap-fill');
     const remainingTaps = document.getElementById('remaining-taps');
@@ -12,10 +12,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function updateTapFill() {
         const fillPercentage = taps / maxTaps;
-        tapFill.style.transform = `scaleX(${fillPercentage})`; // Масштабируем fill от 0 до 1
+        tapFill.style.transform = `scaleX(${fillPercentage})`;
     }
 
-    // Пример уменьшения количества тапов
+    
     function decreaseTaps() {
         if (taps > 0) {
             taps -= 25;
