@@ -2,19 +2,19 @@ import { useEffect } from 'react'
 
 const RedirectToGame = () => {
   useEffect(() => {
-    if (window.Telegram && window.Telegram.WebApp) {
+    const redirect = () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        const telegramData = window.Telegram.WebApp.getData();
+        localStorage.setItem('telegramData', JSON.stringify(telegramData));
+      }
 
       const params = new URLSearchParams(window.location.search);
-      const gameUrl = `https://lifekor.github.io/CamelSwipe/?${params.toString()}`;
-
-      window.Telegram.WebApp.ready();
-
+      const gameUrl = `https://spa.camelracing.io/boost/?${params.toString()}`;
+      console.log(gameUrl);
       window.location.href = gameUrl;
-    } else {
-      const params = new URLSearchParams(window.location.search);
-      const gameUrl = `https://lifekor.github.io/CamelSwipe/?${params.toString()}`;
-      window.location.href = gameUrl;
-    }
+    };
+
+    redirect();
   }, []);
 
   return (

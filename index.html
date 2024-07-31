@@ -45,14 +45,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            const redirectDiv = document.getElementById('redirect');
-            redirectDiv.addEventListener('click', () => {
-                const params = new URLSearchParams(window.location.search);
-                const gameUrl = `https://spa.camelracing.io/boost/?${params.toString()}`;
-                console.log(gameUrl);
-                window.location.href = gameUrl;
-            });
-        });
+        const redirectDiv = document.getElementById('redirect');
+        redirectDiv.addEventListener('click', () => {
+        // Сохранение данных перед редиректом
+        const telegramData = JSON.stringify(window.Telegram?.WebApp.getData() || {});
+        localStorage.setItem('telegramData', telegramData);
+
+        // Переход на React-приложение
+        const params = new URLSearchParams(window.location.search);
+        const reactAppUrl = `https://spa.camelracing.io/?${params.toString()}`;
+        console.log(reactAppUrl);
+        window.location.href = reactAppUrl;
+    });
+});
     </script>
 
 </body>

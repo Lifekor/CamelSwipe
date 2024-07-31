@@ -9,11 +9,29 @@ interface TelegramWebApp {
   ready: () => void;
   setData: (data: any) => void;
   getData: () => any;
+  initData?: any;
 }
 
-const tg: TelegramWebApp = (window as any).Telegram?.WebApp;
+const tg: TelegramWebApp | undefined = (window as any).Telegram?.WebApp;
 
 function App() {
+  useEffect(() => {
+    // Восстановление данных Telegram при возврате в приложение
+    const initializeTelegram = () => {
+      const savedData = localStorage.getItem('telegramData');
+      if (savedData) {
+        const telegramData = JSON.parse(savedData);
+        if (tg) {
+          tg.initData = telegramData;
+        }
+        // Очистить сохраненные данные после восстановления
+        localStorage.removeItem('telegramData');
+      }
+    };
+
+    initializeTelegram();
+  }, []);
+
   return (
     <ErrorProvider>
       <AppContent />
@@ -22,20 +40,6 @@ function App() {
 }
 
 function AppContent() {
-  useEffect(() => {
-    if (tg) {
-      tg.ready();
-
-      // Восстановление состояния, если оно было сохранено
-      const savedState = localStorage.getItem('telegramState');
-      if (savedState) {
-        const state = JSON.parse(savedState);
-        tg.setData(state);
-        localStorage.removeItem('telegramState');
-      }
-    }
-  }, []);
-
   const { error, setError } = useError();
 
   return (
