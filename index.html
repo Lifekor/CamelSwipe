@@ -6,7 +6,7 @@
     <title>Camel Runner</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@telegram/web-app@latest/dist/telegram-web-app.js"></script> <!-- Подключите SDK Telegram -->
+    <script src="https://cdn.jsdelivr.net/npm/@telegram/web-app@latest/dist/telegram-web-app.js"></script> 
 </head>
 <body>
 
@@ -45,38 +45,34 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            // Инициализация Telegram Web App SDK
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
-                // Сохранение состояния или данных Telegram API
-                // Пример: window.Telegram.WebApp.setParams({ key: 'value' });
             }
-
+    
             const redirectDiv = document.getElementById('redirect');
             redirectDiv.addEventListener('click', () => {
                 const params = new URLSearchParams(window.location.search);
                 const gameUrl = `https://spa.camelracing.io/boost/?${params.toString()}`;
-                console.log(gameUrl);
-                // Перед редиректом можно сохранить состояние
+                console.log('Redirecting to:', gameUrl);
                 localStorage.setItem('telegramState', JSON.stringify(window.Telegram.WebApp.getData()));
                 window.location.href = gameUrl;
             });
         });
-
-        // При возврате на страницу восстановления состояния
+    
         window.addEventListener('load', () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 const savedState = localStorage.getItem('telegramState');
                 if (savedState) {
                     const state = JSON.parse(savedState);
-                    // Восстановление состояния
+                    console.log('Restoring state:', state);
                     // Пример: window.Telegram.WebApp.setData(state);
                     localStorage.removeItem('telegramState');
                 }
             }
         });
     </script>
+    
 
 </body>
 </html>
