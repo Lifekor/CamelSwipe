@@ -43,22 +43,5 @@
     <canvas id="gameCanvas"></canvas>
     <script src="script.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-        const redirectDiv = document.getElementById('redirect');
-        redirectDiv.addEventListener('click', () => {
-        // Сохранение данных перед редиректом
-        const telegramData = JSON.stringify(window.Telegram?.WebApp.getData() || {});
-        localStorage.setItem('telegramData', telegramData);
-
-        // Переход на React-приложение
-        const params = new URLSearchParams(window.location.search);
-        const reactAppUrl = `https://spa.camelracing.io/boost/?${params.toString()}`;
-        console.log(reactAppUrl);
-        window.location.href = reactAppUrl;
-    });
-});
-    </script>
-
 </body>
 </html>
