@@ -6,7 +6,7 @@ const RedirectToGame = ({ url }) => {
       style={{ 
         border: "none", 
         width: "100vw", 
-        height: "100vh", 
+        height: "112vh", 
         position: "fixed", 
         top: 0, 
         left: 0 
