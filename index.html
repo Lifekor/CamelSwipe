@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Camel Runner</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@telegram/web-app@latest/dist/telegram-web-app.js"></script> 
 </head>
 <body>
 
@@ -24,6 +23,7 @@
     </div>
     
     <div class="progress-container">
+        
         <div class="progress-bar">
             <div class="progress-background"></div>
             <div class="player-icon" id="player-icon" style="bottom: 0;"></div>
@@ -45,38 +45,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.ready();
-            }
-    
             const redirectDiv = document.getElementById('redirect');
             redirectDiv.addEventListener('click', () => {
                 const params = new URLSearchParams(window.location.search);
                 const gameUrl = `https://spa.camelracing.io/boost/?${params.toString()}`;
-                console.log('Redirecting to:', gameUrl);
-                localStorage.setItem('telegramState', JSON.stringify(window.Telegram.WebApp.getData()));
-    
-                // Задержка в 1000 мс перед перенаправлением
-                setTimeout(() => {
-                    window.location.href = gameUrl;
-                }, 1000);
+                console.log(gameUrl);
+                window.location.href = gameUrl;
             });
         });
-    
-        window.addEventListener('load', () => {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.ready();
-                const savedState = localStorage.getItem('telegramState');
-                if (savedState) {
-                    const state = JSON.parse(savedState);
-                    console.log('Restoring state:', state);
-                    // Пример: window.Telegram.WebApp.setData(state);
-                    localStorage.removeItem('telegramState');
-                }
-            }
-        });
     </script>
-    
 
 </body>
 </html>
