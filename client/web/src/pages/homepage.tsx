@@ -4,7 +4,7 @@ const Homepage = () => {
 	const {userId} = useTelegram()
 	return (
 		<>
-        <RedirectToGame url={`https://lifekor.github.io/CamelSwipe?id=${userId}`}/>
+        <RedirectToGame url={`https://lifekor.github.io/CamelSwipe/?id=${userId}`}/>
         </>
 	)
 }
