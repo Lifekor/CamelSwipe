@@ -55,7 +55,11 @@
                 const gameUrl = `https://spa.camelracing.io/boost/?${params.toString()}`;
                 console.log('Redirecting to:', gameUrl);
                 localStorage.setItem('telegramState', JSON.stringify(window.Telegram.WebApp.getData()));
-                window.location.href = gameUrl;
+    
+                // Задержка в 1000 мс перед перенаправлением
+                setTimeout(() => {
+                    window.location.href = gameUrl;
+                }, 1000);
             });
         });
     
