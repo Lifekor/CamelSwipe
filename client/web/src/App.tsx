@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { ErrorProvider, useError } from './requestProvider/errorContext'
 import ErrorSnackbar from './requestProvider/errorSnackbar'
 import Router from './router/router'
@@ -15,22 +14,6 @@ interface TelegramWebApp {
 const tg: TelegramWebApp | undefined = (window as any).Telegram?.WebApp;
 
 function App() {
-  useEffect(() => {
-    // Восстановление данных Telegram при возврате в приложение
-    const initializeTelegram = () => {
-      const savedData = localStorage.getItem('telegramData');
-      if (savedData) {
-        const telegramData = JSON.parse(savedData);
-        if (tg) {
-          tg.initData = telegramData;
-        }
-        // Очистить сохраненные данные после восстановления
-        localStorage.removeItem('telegramData');
-      }
-    };
-
-    initializeTelegram();
-  }, []);
 
   return (
     <ErrorProvider>
