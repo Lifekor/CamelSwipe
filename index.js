@@ -26,7 +26,7 @@ function sendStartGameMessage(chatId) {
             [
                 {
                     text: 'start app',
-                    web_app: { url: 'http://88.198.46.187:3000' }
+                    web_app: { url: 'https://api.camelracing.io' }
                 }
             ]
         ]

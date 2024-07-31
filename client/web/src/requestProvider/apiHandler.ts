@@ -5,8 +5,8 @@ const useApi = () => {
     const { setError } = useError();
 
     const baseURL = process.env.NODE_ENV === 'production'
-        ? 'https://camelswipe2.onrender.com/'
-        : 'https://camelswipe2.onrender.com/';
+        ? 'https://api.camelracing.io/'
+        : 'https://api.camelracing.io/';
 
     const api = axios.create({
         baseURL: baseURL,
