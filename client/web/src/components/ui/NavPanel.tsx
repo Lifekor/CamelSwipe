@@ -29,9 +29,9 @@ const NavPanel = () => {
 						<p className='text-[10px] text-center  tracking-wider' style={{ color: activeLink === '/tasks' ? 'white' : '#616161' }}>Tasks</p>
 					</Link>
 
-					<div  className='flex flex-col items-center' onClick={() => gotoGame()}>
+					<Link to={'/'} className='flex flex-col items-center' onClick={() => gotoGame()}>
 						<Start style={{ fill: activeLink === '/' ? 'white' : '#616161' }} className='h-[80px] w-[80px] mb-4' />
-					</div>
+					</Link>
 
 					<Link to={'/friends'} className='flex flex-col items-center'>
 						<Friends style={{ width: '27px', fill: activeLink === '/friends' ? 'white' : '#616161' }} />
