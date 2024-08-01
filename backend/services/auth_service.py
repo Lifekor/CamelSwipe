@@ -17,7 +17,7 @@ class AuthService:
     user_boost_collection = None
     coin_collection = None
 
-    def __init__(self):
+    def init(self):
         self.user_collection = db[Collections.USERS]
         self.user_boost_collection = db[Collections.USER_BOOST]
         self.boost_collection = db[Collections.BOOSTS]
@@ -41,7 +41,7 @@ class AuthService:
                                                                 user_id=ObjectId(result.inserted_id),
                                                                 coin_per_hour=0,
                                                                 speed=0,
-                                                                stamina=0,
+                                                                stamina=1000,
                                                                 regeneration=0,
                                                                 points_bonus=0,
                                                                 current_water = 0,

@@ -44,7 +44,7 @@ const totalTaps = document.getElementById('total-taps');
 
 const getInformation = async () => {
  try {
-    const res = await axios.get(`https://api.camelracing.io/game/?user_id=${111}`)
+    const res = await axios.get(`https://api.camelracing.io/game/?user_id=${65744}`)
     taps = res.data.current_water
     stamina = res.data.stamina
     totalTaps.innerText = stamina
@@ -59,7 +59,7 @@ const getInformation = async () => {
 
 const ebuchiyTap = async (claim) => {
     try {
-         await axios.post(`https://api.camelracing.io/game/claim?user_id=${111}&current_path=${progress}&coin=${claim}`)
+         await axios.post(`https://api.camelracing.io/game/claim?user_id=${65744}&current_path=${progress}&coin=${claim}`)
     }catch(e) {
         console.log(e);
     }
