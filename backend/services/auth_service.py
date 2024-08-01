@@ -41,7 +41,7 @@ class AuthService:
                                                                 user_id=ObjectId(result.inserted_id),
                                                                 coin_per_hour=0,
                                                                 speed=0,
-                                                                stamina=1000,
+                                                                stamina=0,
                                                                 regeneration=0,
                                                                 points_bonus=0,
                                                                 current_water = 0,
