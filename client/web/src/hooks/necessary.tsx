@@ -68,7 +68,10 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   }, [])
 
   useEffect(() => {
-    getData()
+    if (identityId) {
+      getData()
+
+    }
   }, [identityId])
 
   return (
