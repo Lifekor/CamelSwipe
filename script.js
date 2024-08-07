@@ -35,8 +35,8 @@ let taps = 1000;
 let progress = 0;
 let speed = 2;
 let frameCounter = 0;
-let stamina = 0
-let regeneration = 0
+let stamina = 0;
+let regeneration = 0;
 
 const params = new URLSearchParams(window.location.search);
 const userId = params.get('id'); 
@@ -44,28 +44,32 @@ const totalTaps = document.getElementById('total-taps');
 
 const getInformation = async () => {
  try {
-    const res = await axios.get(`https://api.camelracing.io/game/?user_id=${123}`)
-    taps = res.data.current_water
-    stamina = res.data.stamina
-    totalTaps.innerText = stamina
-    progress = res.data.current_path
-    regeneration = res.data.regeneration
-    coinCount = res.data.current_coin
-    document.getElementById('coin-count-text').innerText = coinCount
+    const res = await axios.get(`https://api.camelracing.io/game/?user_id=${123}`);
+    taps = res.data.current_water;
+    stamina = res.data.stamina;
+    totalTaps.innerText = stamina;
+    progress = res.data.current_path;
+    regeneration = res.data.regeneration;
+    coinCount = res.data.current_coin;
+    document.getElementById('coin-count-text').innerText = coinCount;
  }catch (e) {
 
  }
-}
+    
+};
+
+
+
 
 const ebuchiyTap = async (claim) => {
     try {
-         await axios.post(`https://api.camelracing.io/game/claim?user_id=${123}&current_path=${progress}&coin=${claim}`)
+         await axios.post(`https://api.camelracing.io/game/claim?user_id=${123}&current_path=${progress}&coin=${claim}`);
     }catch(e) {
         console.log(e);
     }
-}
+};
 
-getInformation()
+getInformation();
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -98,7 +102,7 @@ for (let i = 1; i <= 14; i++) {
 }
 
 let frameIndex = 0;
-const coinSize = 100;
+const coinSize = 75;
 const camelWidth = 1080 / 1.8;
 const camelHeight = 1920 / 1.8;
 
@@ -115,44 +119,48 @@ const coins = [];
 
 function resizeCanvas() {
     const ratio = window.devicePixelRatio || 1;
-    canvas.width = window.innerWidth * ratio;
-    canvas.height = window.innerHeight * ratio;
-    ctx.scale(ratio, ratio);
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    canvas.width = screenWidth * ratio;
+    canvas.height = screenHeight * ratio;
+
+    // Reset transformation matrix to default
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     lanes = [
-        canvas.width / 2 * 0.8,
-        canvas.width / 2 * 0.9,
-        canvas.width / 2,
-        canvas.width / 2 * 1.1,
-        canvas.width / 2 * 1.2
+        canvas.width * 0.4,
+        canvas.width * 0.45,
+        canvas.width * 0.5,
+        canvas.width * 0.55,
+        canvas.width * 0.6
     ];
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
 
 function drawTrack() {
-    // Calculate the aspect ratio of the image
     const imgAspectRatio = trackImg.width / trackImg.height;
     const canvasAspectRatio = canvas.width / canvas.height;
 
     let drawWidth, drawHeight;
     if (canvasAspectRatio > imgAspectRatio) {
-        // If the canvas is wider than the image
+        // Canvas is wider than image
         drawWidth = canvas.width;
         drawHeight = canvas.width / imgAspectRatio;
     } else {
-        // If the canvas is taller than the image
+        // Canvas is taller than image
         drawHeight = canvas.height;
         drawWidth = canvas.height * imgAspectRatio;
     }
 
-    // Calculate the offset to center the image
+    // Center the image on the canvas
     const offsetX = (canvas.width - drawWidth) / 2;
     const offsetY = (canvas.height - drawHeight) / 2;
 
-    ctx.drawImage(trackImg, offsetX, offsetY, drawWidth, drawHeight);
+    ctx.drawImage(trackImg, offsetX / window.devicePixelRatio, offsetY / window.devicePixelRatio, drawWidth / window.devicePixelRatio, drawHeight / window.devicePixelRatio);
 }
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 
 
@@ -161,13 +169,18 @@ function drawCamel() {
     const camelScale = Math.min(canvas.width / 1080, canvas.height / 1920);
     const scaledCamelWidth = camelWidth * camelScale;
     const scaledCamelHeight = camelHeight * camelScale;
-    
+
     if (frameCounter % frameDelay === 0) {
         frameIndex++;
         if (frameIndex >= camelFrames.length) frameIndex = 0;
     }
-    
-    ctx.drawImage(camelFrames[frameIndex], lanes[currentLane] - scaledCamelWidth / 2.5, canvas.height - scaledCamelHeight - 100, scaledCamelWidth, scaledCamelHeight);
+
+    // Центрируем верблюда
+    const camelX = lanes[currentLane] - scaledCamelWidth / 2.5;
+    const camelY = canvas.height - scaledCamelHeight - 100;
+
+    ctx.drawImage(camelFrames[frameIndex], camelX / window.devicePixelRatio, camelY / window.devicePixelRatio, scaledCamelWidth / window.devicePixelRatio, scaledCamelHeight / window.devicePixelRatio);
+
     frameCounter++;
 }
 
@@ -178,9 +191,9 @@ function spawnCoin() {
         const numCoins = Math.floor(Math.random() * 3) + 1;
         for (let i = 0; i < numCoins; i++) {
             const startX = canvas.width / 2;
-            const startY = canvas.height / 1.6;
+            const startY = canvas.height / 1.6 + 50; // Смещение на 50 пикселей вниз
             const laneIndex = Math.floor(Math.random() * lanes.length);
-            coins.push({ startX: startX, startY: startY, endX: lanes[laneIndex], laneIndex: laneIndex, y: startY, frameIndex: 0, scale: 0.2 });
+            coins.push({ startX: startX, startY: startY, endX: lanes[laneIndex], laneIndex: laneIndex, y: startY, frameIndex: 0, scale: 0.3 }); // Увеличение начального масштаба
         }
         coinSpawnTimer = 60;
     }
@@ -197,19 +210,24 @@ function drawCoins() {
         const endX = lanes[coin.laneIndex];
         const x = coin.startX + t * (endX - coin.startX) * (4 + t);
 
-        const coinSizeScaled = coinSize * coin.scale;
-        coin.x = x;
-        ctx.drawImage(coinFrames[coin.frameIndex], x - coinSizeScaled / 2, coin.y - coinSizeScaled / 2, coinSizeScaled, coinSizeScaled);
+        coin.x = x; // Сохраняем текущую позицию по X для обработки кликов
+
+        const coinSizeScaled = coinSize * coin.scale * 1.5;
+
+        const drawX = x / window.devicePixelRatio;
+        const drawY = coin.y / window.devicePixelRatio;
+        const drawCoinSize = coinSizeScaled / window.devicePixelRatio;
+
+        ctx.drawImage(coinFrames[coin.frameIndex], drawX - drawCoinSize / 2, drawY - drawCoinSize / 2, drawCoinSize, drawCoinSize);
         coin.frameIndex++;
         if (coin.frameIndex >= coinFrames.length) coin.frameIndex = 0;
+
         if (coin.y > canvas.height) {
             coins.splice(i, 1);
             i--;
         }
     }
 }
-
-
 
 
 function drawTapText() {
@@ -261,7 +279,7 @@ function updateTapBar() {
     }
 
     tapTimer--;
-    remainingTaps.innerText = Math.round(taps)
+    remainingTaps.innerText = Math.round(taps);
     const fillPercentage = taps / 1000;
     tapFill.style.transform = `scaleX(${fillPercentage})`;
 }
@@ -280,14 +298,17 @@ function gameLoop() {
 
 function triggerVibration() {
     if (navigator.vibrate) {
-        navigator.vibrate(20); // Вибрация 100 мс
+        navigator.vibrate(20);
+    } else if (navigator.webkitVibrate) {
+        navigator.webkitVibrate(20);
     }
 }
 
+
 function handleTap(event) {
     if (taps <= 0) return;
-    const tapX = event.clientX;
-    const tapY = event.clientY;
+    const tapX = event.clientX * window.devicePixelRatio;
+    const tapY = event.clientY * window.devicePixelRatio;
     let tapTextContent = 'x1';
     let tapOnCoin = false;
 
@@ -305,7 +326,7 @@ function handleTap(event) {
             document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
             tapOnCoin = true;
             progress += 0.08;
-            ebuchiyTap(2)
+            ebuchiyTap(2);
             break;
         }
     }
@@ -313,9 +334,9 @@ function handleTap(event) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
         progress += 0.08;
-        ebuchiyTap(1)
+        ebuchiyTap(1);
     }
-    
+
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
     if (taps > 0) {
         taps--;
@@ -329,13 +350,14 @@ function handleTap(event) {
 }
 
 function handleTouch(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
+    event.preventDefault();
     triggerVibration();
     for (let i = 0; i < event.touches.length; i++) {
         const touch = event.touches[i];
-        handleTap({ clientX: touch.clientX, clientY: touch.clientY });
+        handleTap({ clientX: touch.clientX * window.devicePixelRatio, clientY: touch.clientY * window.devicePixelRatio });
     }
 }
+
 
 window.addEventListener('click', handleTap);
 window.addEventListener('touchstart', handleTouch);
