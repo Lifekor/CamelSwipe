@@ -35,8 +35,8 @@ let taps = 1000;
 let progress = 0;
 let speed = 2;
 let frameCounter = 0;
-let stamina = 0
-let regeneration = 0
+let stamina = 0;
+let regeneration = 0;
 
 const params = new URLSearchParams(window.location.search);
 const userId = params.get('id'); 
@@ -44,28 +44,32 @@ const totalTaps = document.getElementById('total-taps');
 
 const getInformation = async () => {
  try {
-    const res = await axios.get(`https://api.camelracing.io/game/?user_id=${123}`)
-    taps = res.data.current_water
-    stamina = res.data.stamina
-    totalTaps.innerText = stamina
-    progress = res.data.current_path
-    regeneration = res.data.regeneration
-    coinCount = res.data.current_coin
-    document.getElementById('coin-count-text').innerText = coinCount
+    const res = await axios.get(`https://api.camelracing.io/game/?user_id=${123}`);
+    taps = res.data.current_water;
+    stamina = res.data.stamina;
+    totalTaps.innerText = stamina;
+    progress = res.data.current_path;
+    regeneration = res.data.regeneration;
+    coinCount = res.data.current_coin;
+    document.getElementById('coin-count-text').innerText = coinCount;
  }catch (e) {
 
  }
-}
+    
+};
+
+
+
 
 const ebuchiyTap = async (claim) => {
     try {
-         await axios.post(`https://api.camelracing.io/game/claim?user_id=${123}&current_path=${progress}&coin=${claim}`)
+         await axios.post(`https://api.camelracing.io/game/claim?user_id=${123}&current_path=${progress}&coin=${claim}`);
     }catch(e) {
         console.log(e);
     }
-}
+};
 
-getInformation()
+getInformation();
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -98,7 +102,7 @@ for (let i = 1; i <= 14; i++) {
 }
 
 let frameIndex = 0;
-const coinSize = 100;
+const coinSize = 75;
 const camelWidth = 1080 / 1.8;
 const camelHeight = 1920 / 1.8;
 
@@ -206,10 +210,10 @@ function drawCoins() {
         const endX = lanes[coin.laneIndex];
         const x = coin.startX + t * (endX - coin.startX) * (4 + t);
 
-        // Увеличение размера монет
-        const coinSizeScaled = coinSize * coin.scale * 1.5; // Увеличение размера монет на 50%
+        coin.x = x; // Сохраняем текущую позицию по X для обработки кликов
 
-        // Масштабируем координаты и размеры с учетом devicePixelRatio
+        const coinSizeScaled = coinSize * coin.scale * 1.5;
+
         const drawX = x / window.devicePixelRatio;
         const drawY = coin.y / window.devicePixelRatio;
         const drawCoinSize = coinSizeScaled / window.devicePixelRatio;
@@ -224,8 +228,6 @@ function drawCoins() {
         }
     }
 }
-
-
 
 
 function drawTapText() {
@@ -277,7 +279,7 @@ function updateTapBar() {
     }
 
     tapTimer--;
-    remainingTaps.innerText = Math.round(taps)
+    remainingTaps.innerText = Math.round(taps);
     const fillPercentage = taps / 1000;
     tapFill.style.transform = `scaleX(${fillPercentage})`;
 }
@@ -296,14 +298,17 @@ function gameLoop() {
 
 function triggerVibration() {
     if (navigator.vibrate) {
-        navigator.vibrate(20); // Вибрация 100 мс
+        navigator.vibrate(20);
+    } else if (navigator.webkitVibrate) {
+        navigator.webkitVibrate(20);
     }
 }
 
+
 function handleTap(event) {
     if (taps <= 0) return;
-    const tapX = event.clientX;
-    const tapY = event.clientY;
+    const tapX = event.clientX * window.devicePixelRatio;
+    const tapY = event.clientY * window.devicePixelRatio;
     let tapTextContent = 'x1';
     let tapOnCoin = false;
 
@@ -321,7 +326,7 @@ function handleTap(event) {
             document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
             tapOnCoin = true;
             progress += 0.08;
-            ebuchiyTap(2)
+            ebuchiyTap(2);
             break;
         }
     }
@@ -329,9 +334,9 @@ function handleTap(event) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
         progress += 0.08;
-        ebuchiyTap(1)
+        ebuchiyTap(1);
     }
-    
+
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
     if (taps > 0) {
         taps--;
@@ -345,13 +350,14 @@ function handleTap(event) {
 }
 
 function handleTouch(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение для тач-событий
+    event.preventDefault();
     triggerVibration();
     for (let i = 0; i < event.touches.length; i++) {
         const touch = event.touches[i];
-        handleTap({ clientX: touch.clientX, clientY: touch.clientY });
+        handleTap({ clientX: touch.clientX * window.devicePixelRatio, clientY: touch.clientY * window.devicePixelRatio });
     }
 }
+
 
 window.addEventListener('click', handleTap);
 window.addEventListener('touchstart', handleTouch);
