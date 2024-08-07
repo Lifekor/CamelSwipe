@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useRef, useState } fro
 import { Link, useLocation } from 'react-router-dom'
 import balance from '../components/images/balance.png'
 import { ReactComponent as Boost } from '../components/images/boost.svg'
-import { idInterface } from '../components/models'
+import { getDataInterface, idInterface } from '../components/models'
 import useStore from '../components/store/zustand'
 import '../components/ui/background.css'
 import NavPanel from '../components/ui/NavPanel'
@@ -32,7 +32,7 @@ interface NavPanelProviderProps {
 export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   const api = useApi()
   const [identityId, setIdentityId] = useState<string>('')
-  const {updateRole} = useStore()
+  const {updateRole, updateCurrentCoin, currentCoin} = useStore()
   const location = useLocation()
   const id = 2010808497
   const {userId, user, name} = useTelegram()
@@ -49,12 +49,27 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
     }
   }
 
+  const getData = async () => {
+    const res = await api<getDataInterface>({
+      url: '/getData',
+      method: "GET",
+    })
+    if (res) {
+      updateCurrentCoin(res?.current_coin)
+    }
+  }
+  
+
   useEffect(() => {
     if (!once.current) {
       getId()
       once.current = true
     }
   }, [])
+
+  useEffect(() => {
+    getData()
+  }, [identityId])
 
   return (
     <NavContext.Provider value={{identityId}}>
@@ -70,7 +85,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
 
           <div className='relative'>
             <img src={balance} alt="" />
-            <p className='absolute left-[53px] top-[7px]'>{abbreviateNumber(0)}</p>
+            <p className='absolute left-[53px] top-[7px]'>{abbreviateNumber(currentCoin)}</p>
           </div>
           
         </div>

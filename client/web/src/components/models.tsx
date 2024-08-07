@@ -1,11 +1,11 @@
 
 export interface storeInterface {
 	role: string
-	solBalance: number
+	currentCoin: number
 	solDeposit: number
 
 	updateRole: (newRole: string) => void
-	updateSolBalance: (newSol: number) => void
+	updateCurrentCoin: (currentCoin: number) => void
 	updateSolDeposit: (newSolDeposit: number) => void
 }
 
@@ -94,4 +94,8 @@ export interface infoTaskModal {
 		link: string;
 		status: string;
 		icon_type: string;
+}
+
+export interface getDataInterface {
+	current_coin: number
 }

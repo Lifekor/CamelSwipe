@@ -3,7 +3,7 @@ import { storeInterface } from '../models'
 
 const useStore = create<storeInterface>((set) => ({
 	role: '',
-	solBalance: 0,
+	currentCoin: 0,
 	solDeposit: 0,
 
 	updateRole: (role: string) => {
@@ -12,9 +12,9 @@ const useStore = create<storeInterface>((set) => ({
 		}))
 	},
 
-	updateSolBalance: (solBalance: number) => {
+	updateCurrentCoin: (currentCoin: number) => {
 		set(state => ({
-			solBalance
+			currentCoin
 		}))
 	},
 
