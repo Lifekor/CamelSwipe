@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-
+class CurrentCointDto(BaseModel):
+    current_coin: float
 class PointDto(BaseModel):
     current_coin: float
     coin_per_hour: float

@@ -51,7 +51,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
 
   const getData = async () => {
     const res = await api<getDataInterface>({
-      url: '/getData',
+      url: '/auth/get-data',
       method: "GET",
     })
     if (res) {

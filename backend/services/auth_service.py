@@ -1,14 +1,15 @@
 import datetime
-from typing import Collection
 
 from bson import ObjectId
 
 from config.collections import Collections
 from config.database import db
+from exceptions.custom_exception import CustomException
 from models.boosts.user_boost import UserBoost
 from models.coins.point import Point
 from models.users.user import User
 from schemas.auth.sign_in_response import SignInResponse
+from schemas.points.point_dto import CurrentCointDto
 
 
 class AuthService:
@@ -17,7 +18,7 @@ class AuthService:
     user_boost_collection = None
     coin_collection = None
 
-    def init(self):
+    def __init__(self):
         self.user_collection = db[Collections.USERS]
         self.user_boost_collection = db[Collections.USER_BOOST]
         self.boost_collection = db[Collections.BOOSTS]
@@ -32,6 +33,15 @@ class AuthService:
 
         result = SignInResponse(user_id=str(user['_id']), role=user['role'])
         return result
+
+    async def get_user_coin(self, user_id: str):
+        user = await self.user_collection.find_one({"_id": ObjectId(user_id)})
+        if user is None:
+            raise CustomException("User not found")
+
+        point = await self.coin_collection.find_one({'user_id': ObjectId(user['_id'])})
+        return CurrentCointDto(current_coin=point['current_coin'])
+
 
     async def _create_user_async(self, user_id: int, username: str):
         role = 'user'
