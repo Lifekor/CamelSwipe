@@ -53,6 +53,9 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
     const res = await api<getDataInterface>({
       url: '/auth/get-data',
       method: "GET",
+      headers: {
+        'x-user-id': identityId
+    }
     })
     if (res) {
       updateCurrentCoin(res?.current_coin)
