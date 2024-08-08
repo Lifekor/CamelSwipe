@@ -31,12 +31,13 @@ const Stars: React.FC<StarsProps> = ({ level }) => (
         }
     }
 
-    const {getData} = useNecessary()
 
 const BoostTable = () => {
     const api = useApi()
     const { identityId } = useNecessary()
     const [upgrades, setUpgrades] = useState<boost[]>([])
+    const {getData} = useNecessary()
+
 
     const getUpgrades = async () => {
         if (!identityId) return
