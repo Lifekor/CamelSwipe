@@ -67,7 +67,7 @@ body {
 #coin-count-text {
     position: absolute;
     top: 25%;
-    left: 75%;
+    left: -75%;
     transform: translate(-50%, -50%);
     font-size: 1.7vh;
     color: white;
