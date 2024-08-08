@@ -5,15 +5,16 @@ import InviteLink from '../components/ui/friendspage/inviteLink'
 import InvitedTable from '../components/ui/friendspage/invitedTable'
 import { useTelegram } from '../hooks/useTelegram'
 const Friendspage = () => {
-const utils = initUtils()
 const {userId} = useTelegram()
-const shareUrl = `https://t.me/fuerfiuatbot?start=${userId}`
 const [copySuccess, setCopySuccess] = useState<string>('')
+const [link, setLink] = useState<string>(`https://t.me/fuerfiuatbot?start=${userId}`)
+
+const utils = initUtils()
 
 const handleShareClick = () => {
 	if (userId) {
 		const shareUrll = `https://t.me/fuerfiuatbot?start=${userId}`
-		utils.openLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrll)}`);
+		utils.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrll)}`);
 	} else {
 		console.error('User ID is not available.');
 	}
@@ -21,14 +22,14 @@ const handleShareClick = () => {
 
 const copyToClipboard = () => {
 	if (navigator.clipboard) {
-		navigator.clipboard.writeText(shareUrl).then(() => {
+		navigator.clipboard.writeText(link).then(() => {
 			setCopySuccess('Link copied')
 		}).catch((error) => {
 			setCopySuccess('Link not copied')
 		})
 	} else {
 		const textarea = document.createElement('textarea')
-		textarea.value = shareUrl
+		textarea.value = link
 		document.body.appendChild(textarea)
 		textarea.select()
 		try {
