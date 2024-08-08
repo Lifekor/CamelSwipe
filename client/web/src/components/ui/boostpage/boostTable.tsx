@@ -31,6 +31,8 @@ const Stars: React.FC<StarsProps> = ({ level }) => (
         }
     }
 
+    const {getData} = useNecessary()
+
 const BoostTable = () => {
     const api = useApi()
     const { identityId } = useNecessary()
@@ -62,6 +64,7 @@ const BoostTable = () => {
 					}
 			})
 			getUpgrades()
+            getData()
 	}
 
     useEffect(() => {

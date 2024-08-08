@@ -11,6 +11,7 @@ import { abbreviateNumber } from './convertNumber'
 import { useTelegram } from './useTelegram'
 interface NavContextType {
   identityId: string;
+  getData: () => void
 }
 
 const NavContext = createContext<NavContextType | undefined>(undefined);
@@ -78,7 +79,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
   }, [identityId])
 
   return (
-    <NavContext.Provider value={{identityId}}>
+    <NavContext.Provider value={{identityId, getData}}>
       {location.pathname !== '/' ? (
         <>
         <div className='flex justify-between w-full mt-10 px-5 text-white font-Montserrat items-center'>

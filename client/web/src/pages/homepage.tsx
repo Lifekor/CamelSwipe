@@ -5,7 +5,7 @@ const Homepage = () => {
 	return (
 		<>
         <RedirectToGame url={`https://lifekor.github.io/CamelSwipe/?id=${userId}`}/>
-        </>
+    </>
 	)
 }
 
