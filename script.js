@@ -316,11 +316,14 @@ function handleTap(event) {
 
     triggerVibration();
 
+    const scaleAdjustment = window.innerWidth < 768 ? 1.5 : 1;  // Увеличиваем зону клика на мобильных
+
     for (let i = 0; i < coins.length; i++) {
         const coin = coins[i];
-        const coinSizeScaled = coinSize * coin.scale;
+        const coinSizeScaled = coinSize * coin.scale * scaleAdjustment;
         const coinX = coin.x - coinSizeScaled / 2;
         const coinY = coin.y - coinSizeScaled / 2;
+
         if (tapX > coinX && tapX < coinX + coinSizeScaled && tapY > coinY && tapY < coinY + coinSizeScaled) {
             tapTextContent = 'x2';
             coins.splice(i, 1);
@@ -332,6 +335,7 @@ function handleTap(event) {
             break;
         }
     }
+    
     if (!tapOnCoin) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
@@ -343,13 +347,12 @@ function handleTap(event) {
     if (taps > 0) {
         taps--;
         document.getElementById('remaining-taps').innerText = taps;
-        const tapBar = document.getElementById('tap-bar');
-        tapBar.style.width = `${(taps / 1000) * 100}%`;
         updateTapFill();
     }
     if (progress > 100) progress = 100;
     updateProgress();
 }
+
 
 function handleTouch(event) {
     event.preventDefault();
