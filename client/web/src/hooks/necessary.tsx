@@ -56,7 +56,7 @@ export const NavPanelProvider = ({ children }: NavPanelProviderProps) => {
       headers: {
         'x-user-id': identityId
     }
-    })
+  })
     if (res) {
       updateCurrentCoin(res?.current_coin)
     }
