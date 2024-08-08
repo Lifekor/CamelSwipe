@@ -40,6 +40,8 @@ let regeneration = 0;
 
 const params = new URLSearchParams(window.location.search);
 const userId = params.get('id'); 
+console.log(userId);
+
 const totalTaps = document.getElementById('total-taps');
 
 const getInformation = async () => {
