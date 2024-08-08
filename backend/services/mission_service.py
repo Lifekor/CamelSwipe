@@ -142,7 +142,7 @@ class MissionService:
 
         user_mission['status'] = MissionStatus.Completed.value
         user_mission['complete_date'] = datetime.datetime.utcnow()
-        point = await self.point_collection.find_one({'user_id': ObjectId(user_id['_id'])})
+        point = await self.point_collection.find_one({'user_id': ObjectId(user_id)})
         if point is None:
             raise CustomException("Point not found")
 
