@@ -248,14 +248,13 @@ function drawTapText() {
         ctx.globalAlpha = 1;
         tap.y -= 2;
         tap.opacity -= 0.02;
+        console.log(`Drawing text: ${tap.text} at (${tap.x}, ${tap.y})`); // Добавим лог для отладки
         if (tap.opacity <= 0) {
             tapText.splice(i, 1);
             i--;
         }
     }
 }
-
-
 
 function updateProgress() {
     const progressBar = document.querySelector('.progress-bar');
@@ -317,7 +316,8 @@ function triggerVibration() {
 
 function handleTap(event) {
     if (taps <= 0) return;
-    const rect = canvas.getBoundingClientRect(); // Получим координаты канваса
+
+    const rect = canvas.getBoundingClientRect(); // Получаем координаты канваса
     const tapX = (event.clientX - rect.left) * (canvas.width / rect.width);
     const tapY = (event.clientY - rect.top) * (canvas.height / rect.height);
     let tapTextContent = 'x1';
@@ -364,6 +364,7 @@ function handleTap(event) {
     if (progress > 100) progress = 100;
     updateProgress();
 }
+
 
 
 
