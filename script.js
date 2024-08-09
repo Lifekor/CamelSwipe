@@ -233,6 +233,7 @@ function drawCoins() {
 
 
 function drawTapText() {
+    console.log('drawTapText called'); // Добавим лог для отладки
     ctx.font = "3vh 'LilitaOne-Regular'";
     ctx.fillStyle = "white";
     for (let i = 0; i < tapText.length; i++) {
@@ -335,7 +336,7 @@ function handleTap(event) {
             break;
         }
     }
-    
+
     if (!tapOnCoin) {
         coinCount++;
         document.getElementById('coin-count-text').innerText = coinCount.toLocaleString();
@@ -344,6 +345,9 @@ function handleTap(event) {
     }
 
     tapText.push({ text: tapTextContent, x: tapX, y: tapY, opacity: 1 });
+    console.log('Tap detected: ', tapTextContent, tapX, tapY); // Добавим лог для отладки
+    drawTapText(); // Принудительно вызовем отрисовку текста
+
     if (taps > 0) {
         taps--;
         document.getElementById('remaining-taps').innerText = taps;
@@ -352,6 +356,7 @@ function handleTap(event) {
     if (progress > 100) progress = 100;
     updateProgress();
 }
+
 
 
 function handleTouch(event) {
