@@ -120,14 +120,15 @@ let coinSpawnTimer = 0;
 const coins = [];
 
 function resizeCanvas() {
-    const screenWidth = 600; // фиксированная ширина
-    const screenHeight = 900; // фиксированная высота
+    const ratio = window.devicePixelRatio || 1;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
 
-    canvas.width = screenWidth;
-    canvas.height = screenHeight;
+    canvas.width = screenWidth * ratio;
+    canvas.height = screenHeight * ratio;
 
     // Reset transformation matrix to default
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     lanes = [
         canvas.width * 0.4,
@@ -140,6 +141,7 @@ function resizeCanvas() {
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
 
 
 function drawTrack() {

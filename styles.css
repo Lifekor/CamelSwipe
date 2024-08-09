@@ -23,12 +23,11 @@ body {
 
 #gameCanvas {
     display: block;
-    width: 600px; /* фиксированная ширина */
-    height: 900px; /* фиксированная высота */
+    width: 100vw; /* 100% ширины экрана */
+    height: 100vh; /* 100% высоты экрана */
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
     image-rendering: crisp-edges;
 }
 
@@ -93,28 +92,29 @@ body {
     left: 2vw; /* Отодвигаем панель немного вправо */
     top: 50%; /* Центрируем по вертикали */
     transform: translateY(-50%); /* Сохраняем центрирование */
-    width: 60px; /* Устанавливаем ширину панели */
-    height: 500px; /* Устанавливаем высоту панели */
+    width: 38px; /* Устанавливаем ширину панели */
+    height: 350px; /* Устанавливаем высоту панели */
     z-index: 2; /* Убедимся, что панель находится выше других элементов */
      /* Добавим фон для видимости */
 }
 
 .progress-bar {
-    position: relative;
+    position: block;
     width: 100%;
     height: 100%;
     background-image: url('textures/progress-bar.png');
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
     z-index: 1;
 }
 
 .player-icon {
     position: absolute;
     bottom: 0;
-    left: 50%; /* Центрируем иконку внутри прогресс-бара */
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
+    left: 0%; /* Центрируем иконку внутри прогресс-бара */
+    transform: translateX(0%);
+    width: 30px;
+    height: 30px;
     background-image: url('textures/player-icon.png');
     background-size: contain;
 }
@@ -123,7 +123,7 @@ body {
 .progress-background {
     position: absolute;
     width: 93%;
-    height: 6%;
+    height: 4%;
     background-color: rgba(246, 176, 62, 1);
     bottom: 0;
     left: 50%;
@@ -140,12 +140,12 @@ body {
     transform: translate(-50%, 100%);
     color: white;
     font-family: 'LilitaOne-Regular';
-    font-size: 2vh;
+    font-size: 1.3vh;
 }
 
 .tap-bar-container {
     position: absolute;
-    bottom: 9vh; /* Уменьшил значение для проверки */
+    bottom: 20vh; /* Уменьшил значение для проверки */
     left: 50%;
     width: 90%;
     max-width: 236px;
@@ -180,7 +180,7 @@ body {
 
 .tap-count-container {
     position: absolute;
-    bottom: 12vh;
+    bottom: 23vh;
     left: 39%;
     width: 90%;
     max-width: 157px;
