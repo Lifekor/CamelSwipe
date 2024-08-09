@@ -120,15 +120,14 @@ let coinSpawnTimer = 0;
 const coins = [];
 
 function resizeCanvas() {
-    const ratio = window.devicePixelRatio || 1;
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+    const screenWidth = 600; // фиксированная ширина
+    const screenHeight = 900; // фиксированная высота
 
-    canvas.width = screenWidth * ratio;
-    canvas.height = screenHeight * ratio;
+    canvas.width = screenWidth;
+    canvas.height = screenHeight;
 
     // Reset transformation matrix to default
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     lanes = [
         canvas.width * 0.4,
@@ -138,6 +137,10 @@ function resizeCanvas() {
         canvas.width * 0.6
     ];
 }
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
 
 function drawTrack() {
     const imgAspectRatio = trackImg.width / trackImg.height;
@@ -233,7 +236,6 @@ function drawCoins() {
 
 
 function drawTapText() {
-    console.log('drawTapText called'); // Добавим лог для отладки
     ctx.font = "3vh 'LilitaOne-Regular'";
     ctx.fillStyle = "white";
     for (let i = 0; i < tapText.length; i++) {
@@ -249,6 +251,7 @@ function drawTapText() {
         }
     }
 }
+
 
 function updateProgress() {
     const progressBar = document.querySelector('.progress-bar');
@@ -310,8 +313,9 @@ function triggerVibration() {
 
 function handleTap(event) {
     if (taps <= 0) return;
-    const tapX = event.clientX * window.devicePixelRatio;
-    const tapY = event.clientY * window.devicePixelRatio;
+    const rect = canvas.getBoundingClientRect(); // Получим координаты канваса
+    const tapX = (event.clientX - rect.left) * (canvas.width / rect.width);
+    const tapY = (event.clientY - rect.top) * (canvas.height / rect.height);
     let tapTextContent = 'x1';
     let tapOnCoin = false;
 
@@ -356,7 +360,6 @@ function handleTap(event) {
     if (progress > 100) progress = 100;
     updateProgress();
 }
-
 
 
 function handleTouch(event) {

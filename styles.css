@@ -23,13 +23,15 @@ body {
 
 #gameCanvas {
     display: block;
-    width: 100vw; /* 100% ширины экрана */
-    height: 100vh; /* 100% высоты экрана */
+    width: 600px; /* фиксированная ширина */
+    height: 900px; /* фиксированная высота */
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     image-rendering: crisp-edges;
 }
+
 
 #redirect {
     position: fixed;
@@ -178,8 +180,11 @@ body {
 
 .tap-count-container {
     position: absolute;
-    bottom: 13vh;
-    left: 31%;
+    bottom: 12vh;
+    left: 39%;
+    width: 90%;
+    max-width: 157px;
+    height: 20px;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
