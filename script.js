@@ -238,6 +238,7 @@ function drawCoins() {
 
 
 function drawTapText() {
+    console.log('drawTapText called'); // Добавим лог для отладки
     ctx.font = "3vh 'LilitaOne-Regular'";
     ctx.fillStyle = "white";
     for (let i = 0; i < tapText.length; i++) {
@@ -253,6 +254,7 @@ function drawTapText() {
         }
     }
 }
+
 
 
 function updateProgress() {
@@ -362,6 +364,7 @@ function handleTap(event) {
     if (progress > 100) progress = 100;
     updateProgress();
 }
+
 
 
 function handleTouch(event) {
